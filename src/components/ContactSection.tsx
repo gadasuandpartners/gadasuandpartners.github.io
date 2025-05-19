@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,31 +9,6 @@ import { useToast } from "@/hooks/use-toast";
 const ContactSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const { toast } = useToast();
-  
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-fade');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-    
-    const elements = sectionRef.current?.querySelectorAll('.fade-element');
-    elements?.forEach(el => {
-      observer.observe(el);
-    });
-    
-    return () => {
-      elements?.forEach(el => {
-        observer.unobserve(el);
-      });
-    };
-  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +31,7 @@ const ContactSection = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="fade-element opacity-0">
+          <div className="animate-fade opacity-0">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -117,7 +92,7 @@ const ContactSection = () => {
             </form>
           </div>
           
-          <div className="fade-element opacity-0">
+          <div className="animate-fade opacity-0">
             <div className="h-full flex flex-col">
               <div className="bg-secondary p-8 mb-6 flex-grow">
                 <h3 className="text-2xl font-light mb-6">Contact Information</h3>
