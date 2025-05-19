@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import ProjectCard from './ProjectCard';
 
 const projectsData = [
@@ -50,14 +50,6 @@ const projectsData = [
 const ProjectsGallery = () => {
   const sectionRef = useRef<HTMLElement>(null);
   
-  useEffect(() => {
-    // Show all project items immediately rather than using scroll-based animations
-    const projectElements = sectionRef.current?.querySelectorAll('.project-item');
-    projectElements?.forEach(el => {
-      el.classList.add('animate-fade');
-    });
-  }, []);
-
   return (
     <section id="projects" className="py-24 bg-white" ref={sectionRef}>
       <div className="container mx-auto px-4">
@@ -68,7 +60,7 @@ const ProjectsGallery = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projectsData.map((project, index) => (
-            <div key={project.id} className="project-item">
+            <div key={project.id} className="project-item animate-fade">
               <ProjectCard
                 title={project.title}
                 category={project.category}
