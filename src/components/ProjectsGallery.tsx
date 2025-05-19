@@ -44,28 +44,11 @@ const ProjectsGallery = () => {
   const sectionRef = useRef<HTMLElement>(null);
   
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-fade');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-    
+    // Show all project items immediately rather than using scroll-based animations
     const projectElements = sectionRef.current?.querySelectorAll('.project-item');
     projectElements?.forEach(el => {
-      observer.observe(el);
+      el.classList.add('animate-fade');
     });
-    
-    return () => {
-      projectElements?.forEach(el => {
-        observer.unobserve(el);
-      });
-    };
   }, []);
 
   return (
@@ -78,7 +61,7 @@ const ProjectsGallery = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {projectsData.map((project, index) => (
-            <div key={project.id} className="opacity-0 project-item">
+            <div key={project.id} className="project-item">
               <ProjectCard
                 title={project.title}
                 category={project.category}

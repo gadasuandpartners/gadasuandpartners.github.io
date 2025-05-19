@@ -22,7 +22,7 @@ const Header = () => {
     )}>
       <div className="flex justify-between items-center">
         <a href="#" className="text-2xl font-montserrat font-medium tracking-tighter">
-          ARCHITECT
+          EDWIN GADASU ARCHITECTS
         </a>
         
         {/* Mobile Menu Button */}
