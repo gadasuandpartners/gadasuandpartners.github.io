@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cn } from '@/lib/utils';
 
 interface ProjectCardProps {
@@ -14,18 +15,19 @@ const ProjectCard = ({ title, category, year, imageUrl, index }: ProjectCardProp
   return (
     <div 
       className={cn(
-        "group cursor-pointer relative overflow-hidden",
+        "group cursor-pointer relative overflow-hidden rounded-md shadow-md",
         index === 0 ? "md:col-span-2 md:row-span-2" : ""
       )}
       style={{ animationDelay: `${index * 0.1}s` }}
     >
-      <div className="h-full aspect-[4/3] md:aspect-auto overflow-hidden">
+      <AspectRatio ratio={4/3}>
         <img 
           src={imageUrl} 
           alt={title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          loading="lazy"
         />
-      </div>
+      </AspectRatio>
       
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="absolute bottom-0 left-0 p-6 w-full">
