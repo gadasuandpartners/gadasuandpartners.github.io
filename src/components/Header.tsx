@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
-import AdminButton from './AdminButton';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -56,7 +55,6 @@ const Header = () => {
             <li><a href="#projects" className="hover:text-black/70 transition-colors">PROJECTS</a></li>
             <li><a href="#about" className="hover:text-black/70 transition-colors">ABOUT</a></li>
             <li><a href="#contact" className="hover:text-black/70 transition-colors">CONTACT</a></li>
-            <li><AdminButton /></li>
           </ul>
         </nav>
       </div>
@@ -103,9 +101,6 @@ const Header = () => {
               >
                 CONTACT
               </a>
-            </li>
-            <li className="pt-4">
-              <AdminButton className="w-full" />
             </li>
           </ul>
         </nav>

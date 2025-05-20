@@ -6,6 +6,7 @@ import { Project } from '@/lib/projectsData';
 import { projectsData } from '@/lib/projectsData';
 import { MainCategory, SubCategory } from '@/lib/projectCategories';
 import Logo from './Logo';
+import { Button } from '@/components/ui/button';
 
 const ProjectsGallery = () => {
   const sectionRef = useRef<HTMLElement>(null);

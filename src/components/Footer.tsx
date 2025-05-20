@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import AdminButton from './AdminButton';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -25,6 +26,7 @@ const Footer = () => {
               <li><a href="#projects" className="hover:text-white transition-colors">Projects</a></li>
               <li><a href="#about" className="hover:text-white transition-colors">About</a></li>
               <li><a href="#contact" className="hover:text-white transition-colors">Contact</a></li>
+              <li><AdminButton className="mt-4" /></li>
             </ul>
           </div>
           

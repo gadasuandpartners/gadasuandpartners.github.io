@@ -11,7 +11,7 @@ const AdminButton = ({ className }: AdminButtonProps) => {
   return (
     <Link to="/admin" className={className}>
       <Button variant="outline" size="sm">
-        Add Project
+        G+P Admin
       </Button>
     </Link>
   );
