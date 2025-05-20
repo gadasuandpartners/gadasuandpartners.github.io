@@ -2,8 +2,10 @@
 import React from 'react';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 interface ProjectCardProps {
+  id: number;
   title: string;
   category: string;
   year: string;
@@ -11,11 +13,12 @@ interface ProjectCardProps {
   index: number;
 }
 
-const ProjectCard = ({ title, category, year, imageUrl, index }: ProjectCardProps) => {
+const ProjectCard = ({ id, title, category, year, imageUrl, index }: ProjectCardProps) => {
   return (
-    <div 
+    <Link 
+      to={`/project/${id}`}
       className={cn(
-        "group cursor-pointer relative overflow-hidden rounded-md shadow-md",
+        "group cursor-pointer relative overflow-hidden rounded-md shadow-md block",
         index === 0 ? "md:col-span-2 md:row-span-2" : ""
       )}
       style={{ animationDelay: `${index * 0.1}s` }}
@@ -37,7 +40,7 @@ const ProjectCard = ({ title, category, year, imageUrl, index }: ProjectCardProp
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
