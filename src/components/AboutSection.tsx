@@ -8,7 +8,7 @@ const AboutSection = () => {
     <section id="about" className="py-24 bg-secondary" ref={sectionRef}>
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="animate-fade opacity-0">
+          <div className="animate-fade">
             <div className="relative h-full">
               <img 
                 src="https://images.unsplash.com/photo-1431576901776-e539bd916ba2?auto=format&fit=crop&q=80" 
@@ -20,7 +20,7 @@ const AboutSection = () => {
             </div>
           </div>
           
-          <div className="flex flex-col justify-center animate-fade opacity-0">
+          <div className="flex flex-col justify-center animate-fade">
             <h2 className="text-3xl md:text-4xl font-light mb-4">ABOUT THE ARCHITECT</h2>
             <div className="w-20 h-0.5 bg-gray-900 mb-8"></div>
             

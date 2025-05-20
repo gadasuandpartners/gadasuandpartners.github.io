@@ -66,7 +66,8 @@
   }
 
   .animate-fade {
-    animation: fadeIn 0.8s ease-in-out;
+    animation: fadeIn 0.8s ease-in-out forwards;
+    will-change: opacity, transform;
   }
 
   @keyframes fadeIn {
