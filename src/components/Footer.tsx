@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -10,7 +11,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h3 className="text-2xl font-montserrat font-medium tracking-tighter mb-4">
-              ARCHITECT
+              G+P
             </h3>
             <p className="text-white/70 max-w-xs">
               Dedicated to creating spaces that inspire, function beautifully, and stand the test of time.
@@ -60,7 +61,7 @@ const Footer = () => {
         
         <div className="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-white/50 text-sm">
-            © {currentYear} Architect Studio. All rights reserved.
+            © {currentYear} Gadasu+Partners. All rights reserved.
           </p>
           
           <div className="mt-4 md:mt-0">

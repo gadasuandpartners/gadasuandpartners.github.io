@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -21,9 +22,9 @@ const Header = () => {
       isScrolled ? "bg-white/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
     )}>
       <div className="flex justify-between items-center">
-        <a href="#" className="text-2xl font-montserrat font-medium tracking-tighter">
-          EDWIN GADASU ARCHITECTS
-        </a>
+        <Link to="/" className="text-2xl font-montserrat font-medium tracking-tighter">
+          GADASU+PARTNERS
+        </Link>
         
         {/* Mobile Menu Button */}
         <button 

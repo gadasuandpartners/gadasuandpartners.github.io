@@ -126,7 +126,7 @@ const ProjectPage = () => {
                   <div className="space-y-6">
                     <div>
                       <h3 className="text-sm text-gray-500 mb-1">ARCHITECT</h3>
-                      <p>{project.architect}</p>
+                      <p>Gadasu+Partners</p>
                     </div>
                     
                     <div>
@@ -170,7 +170,7 @@ const ProjectPage = () => {
                   <p className="text-gray-700 mb-8 text-lg leading-relaxed">{project.description}</p>
                   
                   <p className="text-gray-700 text-lg leading-relaxed">
-                    The design approach focuses on creating a harmonious relationship between the built environment and its 
+                    G+P's design approach focuses on creating a harmonious relationship between the built environment and its 
                     surroundings. Through careful consideration of materials, light, and spatial arrangements, 
                     the architecture evokes a sense of place while meeting all functional requirements.
                   </p>
