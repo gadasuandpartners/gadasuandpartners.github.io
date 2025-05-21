@@ -9,6 +9,18 @@ import { Button } from "@/components/ui/button";
 import { Project, projectsData, countFeaturedProjects, toggleProjectFeatured } from "@/lib/projectsData";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
+import { Trash2 } from "lucide-react";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 
 const AdminPage = () => {
   const [projects, setProjects] = useState<Project[]>(projectsData);
@@ -31,7 +43,20 @@ const AdminPage = () => {
   const handleToggleFeatured = (id: number) => {
     const project = projects.find(p => p.id === id);
     
-    // Don't allow unfeaturing if only 6 featured projects and this one is featured
+    // Allow toggling on regardless of count
+    if (!project?.featured) {
+      const updatedProjects = toggleProjectFeatured(id);
+      setProjects([...updatedProjects]);
+      setFeaturedCount(countFeaturedProjects());
+      
+      toast({
+        title: "Project updated",
+        description: `${project?.title} is now featured`,
+      });
+      return;
+    }
+    
+    // When unfeaturing, check if we would go below minimum
     if (featuredCount <= 6 && project?.featured) {
       toast({
         title: "Cannot unfeatured",
@@ -47,7 +72,36 @@ const AdminPage = () => {
     
     toast({
       title: "Project updated",
-      description: `${project?.title} is now ${!project?.featured ? 'featured' : 'unfeatured'}`,
+      description: `${project?.title} is now unfeatured`,
+    });
+  };
+  
+  const handleDeleteProject = (id: number) => {
+    const project = projects.find(p => p.id === id);
+    if (!project) return;
+    
+    // Check if this is a featured project and we would go below minimum
+    if (project.featured && featuredCount <= 6) {
+      toast({
+        title: "Cannot delete",
+        description: "This is a featured project. You need at least 6 featured projects for the homepage gallery.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Remove project from projectsData
+    const updatedProjects = projectsData.filter(p => p.id !== id);
+    // Update the state projects
+    setProjects(updatedProjects);
+    // Update featuredCount if needed
+    if (project.featured) {
+      setFeaturedCount(prevCount => prevCount - 1);
+    }
+    
+    toast({
+      title: "Project deleted",
+      description: `${project.title} has been removed`,
     });
   };
 
@@ -71,7 +125,7 @@ const AdminPage = () => {
         <div className="mb-10">
           <h2 className="text-2xl font-light mb-6">Featured Projects</h2>
           <p className="mb-4 text-muted-foreground">
-            Select which projects appear on the homepage. You need exactly 6 featured projects.
+            Select which projects appear on the homepage. You need at least 6 featured projects.
             Currently featuring: <span className="font-semibold">{featuredCount}/6</span>
           </p>
           
@@ -83,14 +137,41 @@ const AdminPage = () => {
                     <h3 className="font-medium">{project.title}</h3>
                     <p className="text-sm text-muted-foreground">{project.mainCategory} - {project.subCategory}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">
-                      {project.featured ? "Featured" : "Not featured"}
-                    </span>
-                    <Switch
-                      checked={project.featured}
-                      onCheckedChange={() => handleToggleFeatured(project.id)}
-                    />
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">
+                        {project.featured ? "Featured" : "Not featured"}
+                      </span>
+                      <Switch
+                        checked={project.featured}
+                        onCheckedChange={() => handleToggleFeatured(project.id)}
+                      />
+                    </div>
+                    
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive/80">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete {project.title}? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction 
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            onClick={() => handleDeleteProject(project.id)}
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               ))}
@@ -109,4 +190,3 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
-

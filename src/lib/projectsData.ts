@@ -18,7 +18,7 @@ export interface Project {
   featured: boolean;
 }
 
-export const projectsData: Project[] = [
+export let projectsData: Project[] = [
   {
     id: 1,
     title: "Organic Pavilion",
@@ -146,3 +146,19 @@ export const countFeaturedProjects = () => {
   return projectsData.filter(project => project.featured).length;
 };
 
+export const addProject = (project: Omit<Project, 'id'>) => {
+  // Find the highest ID to ensure uniqueness
+  const highestId = projectsData.reduce((max, project) => Math.max(max, project.id), 0);
+  const newProject: Project = {
+    ...project,
+    id: highestId + 1
+  };
+  
+  projectsData.push(newProject);
+  return newProject;
+};
+
+export const deleteProject = (id: number) => {
+  projectsData = projectsData.filter(project => project.id !== id);
+  return projectsData;
+};

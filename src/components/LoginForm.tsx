@@ -68,11 +68,6 @@ const LoginForm = () => {
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? 'Logging in...' : 'Sign In'}
       </Button>
-      
-      <div className="text-sm text-center text-muted-foreground">
-        <p>For demonstration use:</p>
-        <p>Username: gadasu | Password: gadasu1</p>
-      </div>
     </form>
   );
 };
