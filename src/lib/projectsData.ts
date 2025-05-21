@@ -15,6 +15,7 @@ export interface Project {
   area: string;
   status: string;
   client: string;
+  featured: boolean;
 }
 
 export const projectsData: Project[] = [
@@ -22,7 +23,7 @@ export const projectsData: Project[] = [
     id: 1,
     title: "Organic Pavilion",
     category: "Commercial",
-    mainCategory: "ARCHITECTURAL DESIGN",
+    mainCategory: "Architectural Design",
     subCategory: "Commercial Architecture",
     year: "2023",
     imageUrl: "/lovable-uploads/736ea871-2941-4e80-9534-508fd9db4bca.png",
@@ -31,13 +32,14 @@ export const projectsData: Project[] = [
     architect: "Edwin Gadasu",
     area: "12,500 sq.m",
     status: "Completed",
-    client: "Nordic Ventures Group"
+    client: "Nordic Ventures Group",
+    featured: true
   },
   {
     id: 2,
     title: "Urban Bloom",
     category: "Residential",
-    mainCategory: "ARCHITECTURAL DESIGN",
+    mainCategory: "Architectural Design",
     subCategory: "Residential Architecture - Multi Unit",
     year: "2022",
     imageUrl: "/lovable-uploads/15a43508-7557-4aa2-be9c-a44de267b573.png",
@@ -46,13 +48,14 @@ export const projectsData: Project[] = [
     architect: "Edwin Gadasu & Partners",
     area: "8,200 sq.m",
     status: "Completed",
-    client: "EcoLiving Developments"
+    client: "EcoLiving Developments",
+    featured: true
   },
   {
     id: 3,
     title: "Copper Tower",
     category: "Cultural",
-    mainCategory: "ARCHITECTURAL DESIGN",
+    mainCategory: "Architectural Design",
     subCategory: "Cultural Architecture",
     year: "2021",
     imageUrl: "/lovable-uploads/7cb1d03d-48df-47d4-823f-e66d9a5ade04.png",
@@ -61,13 +64,14 @@ export const projectsData: Project[] = [
     architect: "Edwin Gadasu",
     area: "7,800 sq.m",
     status: "Completed",
-    client: "Barcelona Arts Foundation"
+    client: "Barcelona Arts Foundation",
+    featured: true
   },
   {
     id: 4,
     title: "Azure Mosque",
     category: "Spiritual",
-    mainCategory: "ARCHITECTURAL DESIGN",
+    mainCategory: "Architectural Design",
     subCategory: "Cultural Architecture",
     year: "2023",
     imageUrl: "/lovable-uploads/1906d23e-b50f-474d-9a82-3d4a67c3df32.png",
@@ -76,13 +80,14 @@ export const projectsData: Project[] = [
     architect: "Edwin Gadasu & Associates",
     area: "5,600 sq.m",
     status: "Completed",
-    client: "Islamic Heritage Foundation"
+    client: "Islamic Heritage Foundation",
+    featured: true
   },
   {
     id: 5,
     title: "Harmony Heights",
     category: "Residential",
-    mainCategory: "ARCHITECTURAL DESIGN",
+    mainCategory: "Architectural Design",
     subCategory: "Residential Architecture - Multi Unit",
     year: "2022",
     imageUrl: "/lovable-uploads/6caa6b8d-d5d7-4639-978e-db301a0ec958.png",
@@ -91,13 +96,14 @@ export const projectsData: Project[] = [
     architect: "Edwin Gadasu",
     area: "15,300 sq.m",
     status: "Completed",
-    client: "Pacific Homes"
+    client: "Pacific Homes",
+    featured: true
   },
   {
     id: 6,
     title: "Desert Oasis",
     category: "Hospitality",
-    mainCategory: "INTERIOR DESIGN",
+    mainCategory: "Interior Design",
     subCategory: "Hospitality Interior",
     year: "2022",
     imageUrl: "/lovable-uploads/4b883c8f-683c-4bee-b634-cf0672a3ad75.png",
@@ -106,6 +112,37 @@ export const projectsData: Project[] = [
     architect: "Edwin Gadasu International",
     area: "22,000 sq.m",
     status: "Completed",
-    client: "Sahara Luxury Resorts"
+    client: "Sahara Luxury Resorts",
+    featured: true
   }
 ];
+
+// Functions to manage project data
+export const getFeaturedProjects = (isRandom = false) => {
+  const featuredProjects = projectsData.filter(project => project.featured);
+  
+  if (isRandom) {
+    // Get 6 random projects
+    return [...projectsData]
+      .sort(() => 0.5 - Math.random())
+      .slice(0, Math.min(6, projectsData.length));
+  }
+  
+  // Return featured projects or fallback to showing first 6 if not enough featured
+  return featuredProjects.length >= 6
+    ? featuredProjects.slice(0, 6)
+    : projectsData.slice(0, Math.min(6, projectsData.length));
+};
+
+export const toggleProjectFeatured = (id: number) => {
+  const projectIndex = projectsData.findIndex(project => project.id === id);
+  if (projectIndex !== -1) {
+    projectsData[projectIndex].featured = !projectsData[projectIndex].featured;
+  }
+  return projectsData;
+};
+
+export const countFeaturedProjects = () => {
+  return projectsData.filter(project => project.featured).length;
+};
+

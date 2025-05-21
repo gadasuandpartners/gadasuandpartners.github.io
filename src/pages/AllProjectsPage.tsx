@@ -91,3 +91,4 @@ const AllProjectsPage = () => {
 };
 
 export default AllProjectsPage;
+

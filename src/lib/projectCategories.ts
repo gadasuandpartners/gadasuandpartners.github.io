@@ -1,5 +1,5 @@
 
-export type MainCategory = 'ARCHITECTURAL DESIGN' | 'INTERIOR DESIGN' | 'LANDSCAPE ARCHITECTURE';
+export type MainCategory = 'Architectural Design' | 'Interior Design' | 'Landscape Architecture';
 
 export type SubCategory = string;
 
@@ -10,7 +10,7 @@ export interface CategoryStructure {
 
 export const projectCategories: CategoryStructure[] = [
   {
-    main: 'ARCHITECTURAL DESIGN',
+    main: 'Architectural Design',
     subcategories: [
       'Agricultural Buildings',
       'Commercial Architecture',
@@ -39,7 +39,7 @@ export const projectCategories: CategoryStructure[] = [
     ]
   },
   {
-    main: 'INTERIOR DESIGN',
+    main: 'Interior Design',
     subcategories: [
       'Apartments Interior',
       'Commercial Interior',
@@ -56,7 +56,7 @@ export const projectCategories: CategoryStructure[] = [
     ]
   },
   {
-    main: 'LANDSCAPE ARCHITECTURE',
+    main: 'Landscape Architecture',
     subcategories: [
       'Commercial Landscape',
       'Conceptual Landscape',
@@ -74,3 +74,4 @@ export const projectCategories: CategoryStructure[] = [
     ]
   }
 ];
+

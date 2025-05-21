@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import Index from "./pages/Index";
 import ProjectPage from "./pages/ProjectPage";
 import AdminPage from "./pages/AdminPage";
+import LoginPage from "./pages/LoginPage";
 import AllProjectsPage from "./pages/AllProjectsPage";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +30,7 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/project/:id" element={<ProjectPage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/projects" element={<AllProjectsPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
@@ -40,3 +42,4 @@ const App = () => {
 };
 
 export default App;
+
