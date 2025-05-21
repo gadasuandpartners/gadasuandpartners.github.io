@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 
 interface AdminButtonProps {
   className?: string;
@@ -10,9 +9,7 @@ interface AdminButtonProps {
 const AdminButton = ({ className }: AdminButtonProps) => {
   return (
     <Link to="/admin" className={className}>
-      <Button variant="outline" size="sm">
-        G+P Admin
-      </Button>
+      <span className="hover:text-white transition-colors">G+P Admin</span>
     </Link>
   );
 };

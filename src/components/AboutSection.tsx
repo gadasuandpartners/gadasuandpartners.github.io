@@ -25,27 +25,20 @@ const AboutSection = () => {
             <div className="w-20 h-0.5 bg-gray-900 mb-8"></div>
             
             <p className="text-gray-700 mb-6">
-              With over 15 years of experience in architectural design, I blend innovative concepts with practical 
-              solutions to create spaces that inspire and endure. My approach focuses on sustainable practices, 
-              thoughtful integration with surroundings, and client collaboration.
+              I specialize in architectural design that unites innovation with functionality, crafting spaces that inspire, 
+              endure, and respond to their context. My approach emphasizes sustainability, thoughtful integration with the 
+              environment, and close collaboration with clients to bring each vision to life.
             </p>
             
             <p className="text-gray-700 mb-8">
-              Having worked across residential, commercial, and cultural projects, my portfolio demonstrates 
-              versatility and attention to detail. Each design reflects my belief that architecture should 
-              enhance human experience while respecting environmental context.
+              With a portfolio spanning residential, commercial, and cultural projects, I bring versatility and a deep attention 
+              to detail to every design. I believe architecture should elevate the human experience while honoring the character 
+              of its surroundings.
             </p>
             
-            <div className="grid grid-cols-2 gap-6 mb-8">
-              <div>
-                <h3 className="text-lg font-medium mb-2">Education</h3>
-                <p className="text-sm text-gray-700">Master of Architecture<br />Harvard Graduate School of Design</p>
-              </div>
-              
-              <div>
-                <h3 className="text-lg font-medium mb-2">Awards</h3>
-                <p className="text-sm text-gray-700">Design Excellence Award 2022<br />Sustainable Project Award 2021</p>
-              </div>
+            <div className="mb-8">
+              <h3 className="text-lg font-medium mb-2">Education</h3>
+              <p className="text-sm text-gray-700">Babson College<br />London School of Economics</p>
             </div>
             
             <a href="#contact" className="inline-flex border border-black py-3 px-6 hover:bg-black hover:text-white transition-colors duration-300 self-start">

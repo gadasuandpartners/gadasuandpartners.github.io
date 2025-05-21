@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -103,9 +102,8 @@ const ContactSection = () => {
                     <div>
                       <h4 className="font-medium mb-1">Our Studio</h4>
                       <p className="text-gray-600">
-                        123 Architecture Street<br />
-                        Design District<br />
-                        New York, NY 10001
+                        South Congress<br />
+                        Austin, TX 78745
                       </p>
                     </div>
                   </div>
@@ -115,8 +113,7 @@ const ContactSection = () => {
                     <div>
                       <h4 className="font-medium mb-1">Email Us</h4>
                       <p className="text-gray-600">
-                        info@architect-studio.com<br />
-                        projects@architect-studio.com
+                        info@gadasuandpartners.com
                       </p>
                     </div>
                   </div>
@@ -126,8 +123,7 @@ const ContactSection = () => {
                     <div>
                       <h4 className="font-medium mb-1">Call Us</h4>
                       <p className="text-gray-600">
-                        +1 (555) 123-4567<br />
-                        +1 (555) 987-6543
+                        +1 (617) 549-4269
                       </p>
                     </div>
                   </div>
