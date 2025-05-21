@@ -8,8 +8,8 @@ interface Admin {
 }
 
 const ADMIN_USER: Admin = {
-  username: "admin",
-  password: "password123" // This is not secure, just for demo purposes
+  username: "gadasu",
+  password: "gadasu1" // Updated admin credentials
 };
 
 export const login = (username: string, password: string): boolean => {
@@ -27,4 +27,3 @@ export const logout = (): void => {
 export const isAuthenticated = (): boolean => {
   return localStorage.getItem('isAuthenticated') === 'true';
 };
-

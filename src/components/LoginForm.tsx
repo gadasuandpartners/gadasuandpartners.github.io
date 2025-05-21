@@ -46,7 +46,7 @@ const LoginForm = () => {
         <Input
           id="username"
           type="text"
-          placeholder="admin"
+          placeholder="gadasu"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
@@ -71,11 +71,10 @@ const LoginForm = () => {
       
       <div className="text-sm text-center text-muted-foreground">
         <p>For demonstration use:</p>
-        <p>Username: admin | Password: password123</p>
+        <p>Username: gadasu | Password: gadasu1</p>
       </div>
     </form>
   );
 };
 
 export default LoginForm;
-

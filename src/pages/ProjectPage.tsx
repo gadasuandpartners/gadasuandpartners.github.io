@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { projectsData } from '@/components/ProjectsGallery';
+import { projectsData } from '@/lib/projectsData';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
