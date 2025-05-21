@@ -142,8 +142,44 @@ export const toggleProjectFeatured = (id: number) => {
   return projectsData;
 };
 
+export const updateProject = (id: number, updatedProject: Partial<Project>) => {
+  const projectIndex = projectsData.findIndex(project => project.id === id);
+  if (projectIndex !== -1) {
+    projectsData[projectIndex] = {
+      ...projectsData[projectIndex],
+      ...updatedProject
+    };
+  }
+  return projectsData;
+};
+
+export const replaceFeaturedProject = (unfeaturedId: number, featuredId: number) => {
+  // First, check if we're trying to replace a project with itself
+  if (unfeaturedId === featuredId) return projectsData;
+  
+  // Get the projects
+  const projectToUnfeature = projectsData.find(p => p.id === unfeaturedId);
+  const projectToFeature = projectsData.find(p => p.id === featuredId);
+  
+  // Make sure both projects exist
+  if (!projectToUnfeature || !projectToFeature) return projectsData;
+  
+  // Make sure the one to unfeature is actually featured
+  if (!projectToUnfeature.featured) return projectsData;
+  
+  // Toggle both projects
+  projectToUnfeature.featured = false;
+  projectToFeature.featured = true;
+  
+  return [...projectsData]; // Return new array for reactivity
+};
+
 export const countFeaturedProjects = () => {
   return projectsData.filter(project => project.featured).length;
+};
+
+export const getProjectById = (id: number) => {
+  return projectsData.find(project => project.id === id);
 };
 
 export const addProject = (project: Omit<Project, 'id'>) => {

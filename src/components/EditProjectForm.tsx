@@ -8,33 +8,33 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { projectCategories, MainCategory, SubCategory } from "@/lib/projectCategories";
-import { addProject } from "@/lib/projectsData";
+import { Project, updateProject } from "@/lib/projectsData";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ImageUp, Link as LinkIcon } from "lucide-react";
 
-interface ProjectFormProps {
-  onProjectAdded?: () => void;
+interface EditProjectFormProps {
+  project: Project;
+  onUpdate: () => void;
 }
 
-export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
-  const [title, setTitle] = useState("");
-  const [mainCategory, setMainCategory] = useState<MainCategory | "">("");
-  const [subCategory, setSubCategory] = useState<SubCategory | "">("");
-  const [year, setYear] = useState(new Date().getFullYear().toString());
-  const [imageUrl, setImageUrl] = useState("");
-  const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("");
-  const [architect, setArchitect] = useState("Edwin Gadasu & Partners");
-  const [area, setArea] = useState("");
-  const [status, setStatus] = useState("Planned");
-  const [client, setClient] = useState("");
+export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
+  const [title, setTitle] = useState(project.title);
+  const [mainCategory, setMainCategory] = useState<MainCategory>(project.mainCategory);
+  const [subCategory, setSubCategory] = useState<SubCategory>(project.subCategory);
+  const [year, setYear] = useState(project.year);
+  const [imageUrl, setImageUrl] = useState(project.imageUrl);
+  const [description, setDescription] = useState(project.description);
+  const [location, setLocation] = useState(project.location);
+  const [architect, setArchitect] = useState(project.architect);
+  const [area, setArea] = useState(project.area);
+  const [status, setStatus] = useState(project.status);
+  const [client, setClient] = useState(project.client);
   const [imageSource, setImageSource] = useState<"url" | "upload">("url");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -72,7 +72,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
       return;
     }
     
-    if (imageSource === "upload" && !selectedFile) {
+    if (imageSource === "upload" && !selectedFile && !uploadPreview) {
       toast.error("Please upload an image");
       return;
     }
@@ -81,14 +81,14 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
     // In a real app, you would upload the file to a server
     const finalImageUrl = imageSource === "url" 
       ? imageUrl 
-      : uploadPreview || "/placeholder.svg";
+      : uploadPreview || project.imageUrl;
     
-    // Add the new project
-    const newProject = addProject({
+    // Update the project
+    updateProject(project.id, {
       title,
       category: subCategory, // For backward compatibility
-      mainCategory: mainCategory as MainCategory,
-      subCategory: subCategory as SubCategory,
+      mainCategory,
+      subCategory,
       year,
       imageUrl: finalImageUrl,
       description,
@@ -96,45 +96,22 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
       architect,
       area,
       status,
-      client,
-      featured: false // New projects are not featured by default
+      client
     });
     
-    toast.success("Project added successfully!");
+    toast.success("Project updated successfully!");
     
-    // Reset the form
-    setTitle("");
-    setMainCategory("");
-    setSubCategory("");
-    setYear(new Date().getFullYear().toString());
-    setImageUrl("");
-    setDescription("");
-    setLocation("");
-    setArchitect("Edwin Gadasu & Partners");
-    setArea("");
-    setStatus("Planned");
-    setClient("");
-    setSelectedFile(null);
-    setUploadPreview(null);
-    setImageSource("url");
-    
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-    
-    // Call the callback if provided
-    if (onProjectAdded) {
-      onProjectAdded();
-    }
+    // Call the onUpdate callback
+    onUpdate();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 mt-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="title">Project Title *</Label>
+          <Label htmlFor="title-edit">Project Title *</Label>
           <Input 
-            id="title"
+            id="title-edit"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
@@ -142,26 +119,26 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="year">Year</Label>
+          <Label htmlFor="year-edit">Year</Label>
           <Input 
-            id="year"
+            id="year-edit"
             value={year}
             onChange={(e) => setYear(e.target.value)}
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="main-category">Main Category *</Label>
+          <Label htmlFor="main-category-edit">Main Category *</Label>
           <Select 
             value={mainCategory} 
             onValueChange={(value) => {
               setMainCategory(value as MainCategory);
-              setSubCategory(""); // Reset subcategory when main category changes
+              setSubCategory("" as SubCategory); // Reset subcategory when main category changes
             }}
             required
           >
-            <SelectTrigger id="main-category">
-              <SelectValue placeholder="Select category" />
+            <SelectTrigger id="main-category-edit">
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {projectCategories.map((category) => (
@@ -174,15 +151,15 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="sub-category">Subcategory *</Label>
+          <Label htmlFor="sub-category-edit">Subcategory *</Label>
           <Select 
             value={subCategory}
-            onValueChange={(value) => setSubCategory(value)}
+            onValueChange={(value) => setSubCategory(value as SubCategory)}
             disabled={!mainCategory}
             required
           >
-            <SelectTrigger id="sub-category">
-              <SelectValue placeholder="Select subcategory" />
+            <SelectTrigger id="sub-category-edit">
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {filteredSubcategories.map((sub) => (
@@ -208,10 +185,22 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="url" className="pt-4">
-              <Input 
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-              />
+              <div className="space-y-4">
+                <Input 
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="Enter image URL"
+                />
+                {imageUrl && (
+                  <div className="border rounded-md overflow-hidden">
+                    <img 
+                      src={imageUrl} 
+                      alt="Preview" 
+                      className="w-full h-40 object-cover"
+                    />
+                  </div>
+                )}
+              </div>
             </TabsContent>
             <TabsContent value="upload" className="pt-4">
               <div className="grid gap-4">
@@ -221,10 +210,10 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
                   accept="image/*"
                   onChange={handleFileChange}
                 />
-                {uploadPreview && (
+                {(uploadPreview || project.imageUrl) && (
                   <div className="border rounded-md overflow-hidden">
                     <img 
-                      src={uploadPreview} 
+                      src={uploadPreview || project.imageUrl} 
                       alt="Preview" 
                       className="w-full h-40 object-cover"
                     />
@@ -236,39 +225,42 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="location">Location</Label>
+          <Label htmlFor="location-edit">Location</Label>
           <Input 
-            id="location"
+            id="location-edit"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+            placeholder="City, Country"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="architect">Architect</Label>
+          <Label htmlFor="architect-edit">Architect</Label>
           <Input 
-            id="architect"
+            id="architect-edit"
             value={architect}
             onChange={(e) => setArchitect(e.target.value)}
+            placeholder="Architect name"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="area">Area</Label>
+          <Label htmlFor="area-edit">Area</Label>
           <Input 
-            id="area"
+            id="area-edit"
             value={area}
             onChange={(e) => setArea(e.target.value)}
+            placeholder="Area in sq.m"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="status">Status</Label>
+          <Label htmlFor="status-edit">Status</Label>
           <Select 
             value={status}
             onValueChange={(value) => setStatus(value)}
           >
-            <SelectTrigger id="status">
+            <SelectTrigger id="status-edit">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -280,26 +272,28 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="client">Client</Label>
+          <Label htmlFor="client-edit">Client</Label>
           <Input 
-            id="client"
+            id="client-edit"
             value={client}
             onChange={(e) => setClient(e.target.value)}
+            placeholder="Client name"
           />
         </div>
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description-edit">Description</Label>
         <Textarea 
-          id="description"
+          id="description-edit"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          placeholder="Project description"
           rows={5}
         />
       </div>
       
-      <Button type="submit" className="w-full md:w-auto">Add Project</Button>
+      <Button type="submit" className="w-full md:w-auto">Update Project</Button>
     </form>
   );
 }
