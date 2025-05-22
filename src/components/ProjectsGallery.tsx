@@ -1,20 +1,15 @@
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import ProjectCard from './ProjectCard';
-import { Project } from '@/lib/projectsData';
 import { getFeaturedProjects } from '@/lib/projectsData';
 import Logo from './Logo';
-import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 
 const ProjectsGallery = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const [useRandomProjects, setUseRandomProjects] = useState(false);
   
-  // Get featured projects or random projects based on state
-  const featuredProjects = getFeaturedProjects(useRandomProjects);
+  // Get featured projects
+  const featuredProjects = getFeaturedProjects();
 
   return (
     <section id="projects" className="py-24 bg-white" ref={sectionRef}>
@@ -24,19 +19,9 @@ const ProjectsGallery = () => {
             <h2 className="text-3xl md:text-4xl font-light mb-4">SELECTED PROJECTS</h2>
             <div className="w-20 h-0.5 bg-gray-900"></div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="random-projects"
-                checked={useRandomProjects}
-                onCheckedChange={setUseRandomProjects}
-              />
-              <Label htmlFor="random-projects" className="text-sm text-gray-600">Random Selection</Label>
-            </div>
-            <Link to="/projects" className="text-black hover:text-black/70 transition-colors border-b border-black pb-1">
-              View All Projects
-            </Link>
-          </div>
+          <Link to="/projects" className="text-black hover:text-black/70 transition-colors border-b border-black pb-1">
+            View All Projects
+          </Link>
         </div>
         
         {featuredProjects.length > 0 ? (
@@ -66,4 +51,3 @@ const ProjectsGallery = () => {
 };
 
 export default ProjectsGallery;
-

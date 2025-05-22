@@ -25,14 +25,14 @@ const AboutSection = () => {
             <div className="w-20 h-0.5 bg-gray-900 mb-8"></div>
             
             <p className="text-gray-700 mb-6">
-              I specialize in architectural design that unites innovation with functionality, crafting spaces that inspire, 
-              endure, and respond to their context. My approach emphasizes sustainability, thoughtful integration with the 
+              We specialize in architectural design that unites innovation with functionality, crafting spaces that inspire, 
+              endure, and respond to their context. Our approach emphasizes sustainability, thoughtful integration with the 
               environment, and close collaboration with clients to bring each vision to life.
             </p>
             
             <p className="text-gray-700 mb-8">
-              With a portfolio spanning residential, commercial, and cultural projects, I bring versatility and a deep attention 
-              to detail to every design. I believe architecture should elevate the human experience while honoring the character 
+              With a portfolio spanning residential, commercial, and cultural projects, we bring versatility and a deep attention 
+              to detail to every design. We believe architecture should elevate the human experience while honoring the character 
               of its surroundings.
             </p>
             
