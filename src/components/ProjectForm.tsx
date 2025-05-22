@@ -8,7 +8,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -17,7 +16,7 @@ import { addProject } from "@/lib/projectsData";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ImageUp, Link as LinkIcon } from "lucide-react";
+import { ImageUp, Link as LinkIcon, PlusCircle } from "lucide-react";
 
 interface ProjectFormProps {
   onProjectAdded?: () => void;
@@ -31,7 +30,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
   const [imageUrl, setImageUrl] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-  const [architect, setArchitect] = useState("Edwin Gadasu & Partners");
+  const [architect, setArchitect] = useState("Gadasu & Partners");
   const [area, setArea] = useState("");
   const [status, setStatus] = useState("Planned");
   const [client, setClient] = useState("");
@@ -39,6 +38,10 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  
+  // New state for gallery images
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [newGalleryImageUrl, setNewGalleryImageUrl] = useState("");
 
   // Filter subcategories based on selected main category
   const filteredSubcategories = mainCategory
@@ -57,6 +60,23 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
       };
       reader.readAsDataURL(file);
     }
+  };
+  
+  // Add a gallery image
+  const addGalleryImage = () => {
+    if (newGalleryImageUrl && !galleryImages.includes(newGalleryImageUrl)) {
+      setGalleryImages([...galleryImages, newGalleryImageUrl]);
+      setNewGalleryImageUrl("");
+    } else {
+      toast.error("Please enter a valid unique image URL");
+    }
+  };
+  
+  // Remove a gallery image
+  const removeGalleryImage = (index: number) => {
+    const updatedGallery = [...galleryImages];
+    updatedGallery.splice(index, 1);
+    setGalleryImages(updatedGallery);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -97,7 +117,8 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
       area,
       status,
       client,
-      featured: false // New projects are not featured by default
+      featured: false, // New projects are not featured by default
+      galleryImages: galleryImages // Add gallery images
     });
     
     toast.success("Project added successfully!");
@@ -110,13 +131,15 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
     setImageUrl("");
     setDescription("");
     setLocation("");
-    setArchitect("Edwin Gadasu & Partners");
+    setArchitect("Gadasu & Partners");
     setArea("");
     setStatus("Planned");
     setClient("");
     setSelectedFile(null);
     setUploadPreview(null);
     setImageSource("url");
+    setGalleryImages([]);
+    setNewGalleryImageUrl("");
     
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -137,6 +160,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter project title"
             required
           />
         </div>
@@ -147,6 +171,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
             id="year"
             value={year}
             onChange={(e) => setYear(e.target.value)}
+            placeholder="Enter year"
           />
         </div>
         
@@ -211,7 +236,17 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
               <Input 
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="Enter image URL"
               />
+              {imageUrl && (
+                <div className="mt-2 border rounded-md overflow-hidden">
+                  <img 
+                    src={imageUrl} 
+                    alt="Preview" 
+                    className="w-full h-40 object-cover"
+                  />
+                </div>
+              )}
             </TabsContent>
             <TabsContent value="upload" className="pt-4">
               <div className="grid gap-4">
@@ -235,12 +270,52 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
           </Tabs>
         </div>
         
+        {/* Gallery Images Section */}
+        <div className="space-y-4 col-span-1 md:col-span-2">
+          <Label>Project Gallery Images</Label>
+          <div className="flex gap-2">
+            <Input 
+              value={newGalleryImageUrl}
+              onChange={(e) => setNewGalleryImageUrl(e.target.value)}
+              placeholder="Enter gallery image URL"
+              className="flex-1"
+            />
+            <Button type="button" onClick={addGalleryImage} size="icon">
+              <PlusCircle className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          {galleryImages.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+              {galleryImages.map((img, index) => (
+                <div key={index} className="relative group">
+                  <img 
+                    src={img} 
+                    alt={`Gallery ${index + 1}`}
+                    className="w-full h-24 object-cover border rounded-md"
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => removeGalleryImage(index)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
         <div className="space-y-2">
           <Label htmlFor="location">Location</Label>
           <Input 
             id="location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+            placeholder="City, Country"
           />
         </div>
         
@@ -250,6 +325,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
             id="architect"
             value={architect}
             onChange={(e) => setArchitect(e.target.value)}
+            placeholder="Architect name"
           />
         </div>
         
@@ -259,6 +335,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
             id="area"
             value={area}
             onChange={(e) => setArea(e.target.value)}
+            placeholder="Area in sq.m"
           />
         </div>
         
@@ -285,6 +362,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
             id="client"
             value={client}
             onChange={(e) => setClient(e.target.value)}
+            placeholder="Client name"
           />
         </div>
       </div>
@@ -295,6 +373,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          placeholder="Enter project description"
           rows={5}
         />
       </div>

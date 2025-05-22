@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
@@ -76,6 +75,9 @@ const ProjectPage = () => {
             foundProject.imageUrl,
             ...projectGalleryImages[projectId - 1]
           ]);
+        } else {
+          // If no gallery images exist for this project, just use the main image
+          setGalleryImages([foundProject.imageUrl]);
         }
       }
     }
@@ -157,7 +159,7 @@ const ProjectPage = () => {
 
                   <div className="mt-12">
                     <Button asChild variant="outline" className="rounded-none border-black">
-                      <a href="#contact">Contact about this project</a>
+                      <a href="/#contact">Contact about this project</a>
                     </Button>
                   </div>
                 </div>
@@ -168,12 +170,6 @@ const ProjectPage = () => {
                 <div className="prose prose-lg max-w-none mb-12">
                   <h2 className="text-3xl font-light mb-6">Project Overview</h2>
                   <p className="text-gray-700 mb-8 text-lg leading-relaxed">{project.description}</p>
-                  
-                  <p className="text-gray-700 text-lg leading-relaxed">
-                    G+P's design approach focuses on creating a harmonious relationship between the built environment and its 
-                    surroundings. Through careful consideration of materials, light, and spatial arrangements, 
-                    the architecture evokes a sense of place while meeting all functional requirements.
-                  </p>
                 </div>
 
                 <Separator className="my-12" />
@@ -227,9 +223,9 @@ const ProjectPage = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {projectsData
-                .filter(p => p.id !== project.id && p.category === project.category)
+                .filter(p => p.id !== project.id && p.category === project.category && !p.archived)
                 .slice(0, 3)
-                .map((relatedProject, index) => (
+                .map((relatedProject) => (
                   <Link 
                     key={relatedProject.id} 
                     to={`/project/${relatedProject.id}`}

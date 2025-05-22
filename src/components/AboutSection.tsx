@@ -36,11 +36,6 @@ const AboutSection = () => {
               of its surroundings.
             </p>
             
-            <div className="mb-8">
-              <h3 className="text-lg font-medium mb-2">Education</h3>
-              <p className="text-sm text-gray-700">Babson College<br />London School of Economics</p>
-            </div>
-            
             <a href="#contact" className="inline-flex border border-black py-3 px-6 hover:bg-black hover:text-white transition-colors duration-300 self-start">
               GET IN TOUCH
             </a>

@@ -17,9 +17,31 @@ export interface Project {
   client: string;
   featured: boolean;
   archived: boolean; // New field to support archiving
+  galleryImages?: string[]; // New field to support project gallery
 }
 
-export let projectsData: Project[] = [
+// Helper function to persist projects in localStorage
+const saveProjectsToLocalStorage = (projects: Project[]) => {
+  try {
+    localStorage.setItem('projectsData', JSON.stringify(projects));
+  } catch (error) {
+    console.error('Failed to save projects to localStorage:', error);
+  }
+};
+
+// Helper function to retrieve projects from localStorage
+const loadProjectsFromLocalStorage = (): Project[] | null => {
+  try {
+    const storedProjects = localStorage.getItem('projectsData');
+    return storedProjects ? JSON.parse(storedProjects) : null;
+  } catch (error) {
+    console.error('Failed to load projects from localStorage:', error);
+    return null;
+  }
+};
+
+// Initialize projects data - load from localStorage or use defaults
+const initialProjectsData: Project[] = [
   {
     id: 1,
     title: "Organic Pavilion",
@@ -124,6 +146,9 @@ export let projectsData: Project[] = [
   }
 ];
 
+// Load projects from localStorage or use defaults
+export let projectsData: Project[] = loadProjectsFromLocalStorage() || [...initialProjectsData];
+
 // Company social media links
 export interface SocialMediaLinks {
   instagram?: string;
@@ -131,11 +156,18 @@ export interface SocialMediaLinks {
   linkedin?: string;
 }
 
-export let socialMediaLinks: SocialMediaLinks = {
-  instagram: "",
-  twitter: "",
-  linkedin: ""
+// Load social media links from localStorage or use empty defaults
+const loadSocialMediaLinks = (): SocialMediaLinks => {
+  try {
+    const storedLinks = localStorage.getItem('socialMediaLinks');
+    return storedLinks ? JSON.parse(storedLinks) : { instagram: "", twitter: "", linkedin: "" };
+  } catch (error) {
+    console.error('Failed to load social media links from localStorage:', error);
+    return { instagram: "", twitter: "", linkedin: "" };
+  }
 };
+
+export let socialMediaLinks: SocialMediaLinks = loadSocialMediaLinks();
 
 // Update social media links
 export const updateSocialMediaLinks = (links: SocialMediaLinks) => {
@@ -143,6 +175,14 @@ export const updateSocialMediaLinks = (links: SocialMediaLinks) => {
     ...socialMediaLinks,
     ...links
   };
+  
+  // Save to localStorage
+  try {
+    localStorage.setItem('socialMediaLinks', JSON.stringify(socialMediaLinks));
+  } catch (error) {
+    console.error('Failed to save social media links to localStorage:', error);
+  }
+  
   return socialMediaLinks;
 };
 
@@ -174,6 +214,7 @@ export const toggleProjectFeatured = (id: number) => {
   const projectIndex = projectsData.findIndex(project => project.id === id);
   if (projectIndex !== -1) {
     projectsData[projectIndex].featured = !projectsData[projectIndex].featured;
+    saveProjectsToLocalStorage(projectsData);
   }
   return projectsData;
 };
@@ -185,6 +226,7 @@ export const updateProject = (id: number, updatedProject: Partial<Project>) => {
       ...projectsData[projectIndex],
       ...updatedProject
     };
+    saveProjectsToLocalStorage(projectsData);
   }
   return projectsData;
 };
@@ -207,6 +249,9 @@ export const replaceFeaturedProject = (unfeaturedId: number, featuredId: number)
   projectToUnfeature.featured = false;
   projectToFeature.featured = true;
   
+  // Save to localStorage
+  saveProjectsToLocalStorage(projectsData);
+  
   return [...projectsData]; // Return new array for reactivity
 };
 
@@ -224,10 +269,12 @@ export const addProject = (project: Omit<Project, 'id' | 'archived'>) => {
   const newProject: Project = {
     ...project,
     id: highestId + 1,
-    archived: false
+    archived: false,
+    galleryImages: [] // Initialize empty gallery
   };
   
   projectsData.push(newProject);
+  saveProjectsToLocalStorage(projectsData);
   return newProject;
 };
 
@@ -239,6 +286,7 @@ export const archiveProject = (id: number) => {
     if (projectsData[projectIndex].featured) {
       projectsData[projectIndex].featured = false;
     }
+    saveProjectsToLocalStorage(projectsData);
   }
   return projectsData;
 };
@@ -247,6 +295,7 @@ export const unarchiveProject = (id: number) => {
   const projectIndex = projectsData.findIndex(project => project.id === id);
   if (projectIndex !== -1) {
     projectsData[projectIndex].archived = false;
+    saveProjectsToLocalStorage(projectsData);
   }
   return projectsData;
 };
@@ -261,14 +310,49 @@ export const getNonArchivedProjects = () => {
 
 export const deleteProject = (id: number) => {
   projectsData = projectsData.filter(project => project.id !== id);
+  saveProjectsToLocalStorage(projectsData);
   return projectsData;
+};
+
+// Function to add or update gallery images for a project
+export const updateProjectGallery = (id: number, galleryImages: string[]) => {
+  const projectIndex = projectsData.findIndex(project => project.id === id);
+  if (projectIndex !== -1) {
+    projectsData[projectIndex].galleryImages = galleryImages;
+    saveProjectsToLocalStorage(projectsData);
+  }
+  return projectsData;
+};
+
+// Function to get gallery images for a project
+export const getProjectGallery = (id: number): string[] => {
+  const project = projectsData.find(project => project.id === id);
+  return project?.galleryImages || [];
 };
 
 // Function to set random selection mode for the homepage
 export let useRandomSelection = false;
 
+const loadRandomSelectionSetting = (): boolean => {
+  try {
+    const storedSetting = localStorage.getItem('useRandomSelection');
+    return storedSetting ? JSON.parse(storedSetting) : false;
+  } catch (error) {
+    console.error('Failed to load random selection setting from localStorage:', error);
+    return false;
+  }
+};
+
+// Initialize from localStorage
+useRandomSelection = loadRandomSelectionSetting();
+
 export const setRandomSelection = (value: boolean) => {
   useRandomSelection = value;
+  try {
+    localStorage.setItem('useRandomSelection', JSON.stringify(value));
+  } catch (error) {
+    console.error('Failed to save random selection setting to localStorage:', error);
+  }
   return useRandomSelection;
 };
 

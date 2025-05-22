@@ -36,30 +36,20 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-medium mb-4">Connect</h4>
             <div className="flex space-x-4 mb-6">
-              {socialLinks.instagram && (
-                <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 border border-white/50 flex items-center justify-center hover:bg-white hover:text-black transition-colors">
-                  <span className="sr-only">Instagram</span>
-                  <Instagram className="w-4 h-4" />
-                </a>
-              )}
+              <a href={socialLinks.instagram || "#contact"} target={socialLinks.instagram ? "_blank" : "_self"} rel="noopener noreferrer" className="w-10 h-10 border border-white/50 flex items-center justify-center hover:bg-white hover:text-black transition-colors">
+                <span className="sr-only">Instagram</span>
+                <Instagram className="w-4 h-4" />
+              </a>
               
-              {socialLinks.twitter && (
-                <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="w-10 h-10 border border-white/50 flex items-center justify-center hover:bg-white hover:text-black transition-colors">
-                  <span className="sr-only">Twitter</span>
-                  <Twitter className="w-4 h-4" />
-                </a>
-              )}
+              <a href={socialLinks.twitter || "#contact"} target={socialLinks.twitter ? "_blank" : "_self"} rel="noopener noreferrer" className="w-10 h-10 border border-white/50 flex items-center justify-center hover:bg-white hover:text-black transition-colors">
+                <span className="sr-only">Twitter</span>
+                <Twitter className="w-4 h-4" />
+              </a>
               
-              {socialLinks.linkedin && (
-                <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="w-10 h-10 border border-white/50 flex items-center justify-center hover:bg-white hover:text-black transition-colors">
-                  <span className="sr-only">LinkedIn</span>
-                  <Linkedin className="w-4 h-4" />
-                </a>
-              )}
-              
-              {!socialLinks.instagram && !socialLinks.twitter && !socialLinks.linkedin && (
-                <p className="text-white/50 text-sm">Social media links will appear here once configured in admin.</p>
-              )}
+              <a href={socialLinks.linkedin || "#contact"} target={socialLinks.linkedin ? "_blank" : "_self"} rel="noopener noreferrer" className="w-10 h-10 border border-white/50 flex items-center justify-center hover:bg-white hover:text-black transition-colors">
+                <span className="sr-only">LinkedIn</span>
+                <Linkedin className="w-4 h-4" />
+              </a>
             </div>
             
             <p className="text-white/50 text-sm">

@@ -1,22 +1,21 @@
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { 
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { projectCategories, MainCategory, SubCategory } from "@/lib/projectCategories";
-import { Project, updateProject } from "@/lib/projectsData";
+import { Project, updateProject, getProjectGallery, updateProjectGallery } from "@/lib/projectsData";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ImageUp, Link as LinkIcon } from "lucide-react";
+import { ImageUp, Link as LinkIcon, PlusCircle } from "lucide-react";
 
 interface EditProjectFormProps {
   project: Project;
@@ -39,11 +38,21 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  
+  // Gallery images state
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [newGalleryImageUrl, setNewGalleryImageUrl] = useState("");
 
   // Filter subcategories based on selected main category
   const filteredSubcategories = mainCategory
     ? projectCategories.find(cat => cat.main === mainCategory)?.subcategories || []
     : [];
+
+  // Load gallery images on mount
+  useEffect(() => {
+    // Get gallery images from project or initialize empty array
+    setGalleryImages(project.galleryImages || []);
+  }, [project.id]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -57,6 +66,23 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
       };
       reader.readAsDataURL(file);
     }
+  };
+  
+  // Add a gallery image
+  const addGalleryImage = () => {
+    if (newGalleryImageUrl && !galleryImages.includes(newGalleryImageUrl)) {
+      setGalleryImages([...galleryImages, newGalleryImageUrl]);
+      setNewGalleryImageUrl("");
+    } else {
+      toast.error("Please enter a valid unique image URL");
+    }
+  };
+  
+  // Remove a gallery image
+  const removeGalleryImage = (index: number) => {
+    const updatedGallery = [...galleryImages];
+    updatedGallery.splice(index, 1);
+    setGalleryImages(updatedGallery);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -96,8 +122,12 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
       architect,
       area,
       status,
-      client
+      client,
+      galleryImages // Update gallery images
     });
+    
+    // Update project gallery
+    updateProjectGallery(project.id, galleryImages);
     
     toast.success("Project updated successfully!");
     
@@ -222,6 +252,45 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
               </div>
             </TabsContent>
           </Tabs>
+        </div>
+        
+        {/* Gallery Images Section */}
+        <div className="space-y-4 col-span-1 md:col-span-2">
+          <Label>Project Gallery Images</Label>
+          <div className="flex gap-2">
+            <Input 
+              value={newGalleryImageUrl}
+              onChange={(e) => setNewGalleryImageUrl(e.target.value)}
+              placeholder="Enter gallery image URL"
+              className="flex-1"
+            />
+            <Button type="button" onClick={addGalleryImage} size="icon">
+              <PlusCircle className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          {galleryImages.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+              {galleryImages.map((img, index) => (
+                <div key={index} className="relative group">
+                  <img 
+                    src={img} 
+                    alt={`Gallery ${index + 1}`}
+                    className="w-full h-24 object-cover border rounded-md"
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => removeGalleryImage(index)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         
         <div className="space-y-2">
