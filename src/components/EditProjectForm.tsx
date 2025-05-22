@@ -11,11 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { projectCategories, MainCategory, SubCategory } from "@/lib/projectCategories";
-import { Project, updateProject, getProjectGallery, updateProjectGallery } from "@/lib/projectsData";
+import { Project, updateProject } from "@/lib/projectsData";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ImageUp, Link as LinkIcon, PlusCircle } from "lucide-react";
+import { ImageUp, Link as LinkIcon, PlusCircle, X } from "lucide-react";
+import { CardContent } from "./ui/card";
 
 interface EditProjectFormProps {
   project: Project;
@@ -42,6 +43,9 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
   // Gallery images state
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [newGalleryImageUrl, setNewGalleryImageUrl] = useState("");
+  const [galleryImageSource, setGalleryImageSource] = useState<"url" | "upload">("url");
+  const galleryFileInputRef = useRef<HTMLInputElement>(null);
+  const [galleryPreview, setGalleryPreview] = useState<string | null>(null);
 
   // Filter subcategories based on selected main category
   const filteredSubcategories = mainCategory
@@ -50,9 +54,8 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
 
   // Load gallery images on mount
   useEffect(() => {
-    // Get gallery images from project or initialize empty array
     setGalleryImages(project.galleryImages || []);
-  }, [project.id]);
+  }, [project.id, project.galleryImages]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -63,6 +66,29 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
       const reader = new FileReader();
       reader.onload = (event) => {
         setUploadPreview(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const handleGalleryFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      
+      // Create a preview
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const preview = event.target?.result as string;
+        setGalleryPreview(preview);
+        
+        // Add to gallery immediately
+        setGalleryImages(prev => [...prev, preview]);
+        
+        // Reset the file input
+        if (galleryFileInputRef.current) {
+          galleryFileInputRef.current.value = '';
+        }
+        setGalleryPreview(null);
       };
       reader.readAsDataURL(file);
     }
@@ -123,11 +149,8 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
       area,
       status,
       client,
-      galleryImages // Update gallery images
+      galleryImages
     });
-    
-    // Update project gallery
-    updateProjectGallery(project.id, galleryImages);
     
     toast.success("Project updated successfully!");
     
@@ -257,17 +280,41 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
         {/* Gallery Images Section */}
         <div className="space-y-4 col-span-1 md:col-span-2">
           <Label>Project Gallery Images</Label>
-          <div className="flex gap-2">
-            <Input 
-              value={newGalleryImageUrl}
-              onChange={(e) => setNewGalleryImageUrl(e.target.value)}
-              placeholder="Enter gallery image URL"
-              className="flex-1"
-            />
-            <Button type="button" onClick={addGalleryImage} size="icon">
-              <PlusCircle className="h-4 w-4" />
-            </Button>
-          </div>
+          <Tabs defaultValue="url" value={galleryImageSource} onValueChange={(v) => setGalleryImageSource(v as "url" | "upload")} className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="url" className="flex items-center gap-2">
+                <LinkIcon className="h-4 w-4" />
+                Image URL
+              </TabsTrigger>
+              <TabsTrigger value="upload" className="flex items-center gap-2">
+                <ImageUp className="h-4 w-4" />
+                Upload Image
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="url" className="pt-4">
+              <div className="flex gap-2">
+                <Input 
+                  value={newGalleryImageUrl}
+                  onChange={(e) => setNewGalleryImageUrl(e.target.value)}
+                  placeholder="Enter gallery image URL"
+                  className="flex-1"
+                />
+                <Button type="button" onClick={addGalleryImage} size="icon">
+                  <PlusCircle className="h-4 w-4" />
+                </Button>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="upload" className="pt-4">
+              <Input 
+                ref={galleryFileInputRef}
+                type="file" 
+                accept="image/*"
+                onChange={handleGalleryFileChange}
+              />
+            </TabsContent>
+          </Tabs>
           
           {galleryImages.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
@@ -283,9 +330,7 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
                     className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={() => removeGalleryImage(index)}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
+                    <X className="h-4 w-4" />
                   </button>
                 </div>
               ))}

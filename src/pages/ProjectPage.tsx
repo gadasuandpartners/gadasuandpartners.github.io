@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
@@ -15,50 +16,11 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-// Additional images for each project's gallery
-const projectGalleryImages = [
-  // Project 1 gallery
-  [
-    "https://images.unsplash.com/photo-1486718448742-163732cd1544?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1460574283810-2aab119d8511?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1439337153520-7082a56a81f4?auto=format&fit=crop&q=80"
-  ],
-  // Project 2 gallery
-  [
-    "https://images.unsplash.com/photo-1497604401993-f2e922e5cb0a?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1473177104440-ffee2f376098?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1494891848038-7bd202a2afeb?auto=format&fit=crop&q=80"
-  ],
-  // Project 3 gallery
-  [
-    "https://images.unsplash.com/photo-1551038247-3d9af20df552?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1524230572899-a752b3835840?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1433832597046-4f10e10ac764?auto=format&fit=crop&q=80"
-  ],
-  // Project 4 gallery
-  [
-    "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1466442929976-97f336a657be?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1492321936769-b49830bc1d1e?auto=format&fit=crop&q=80"
-  ],
-  // Project 5 gallery
-  [
-    "https://images.unsplash.com/photo-1431576901776-e539bd916ba2?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&q=80"
-  ],
-  // Project 6 gallery
-  [
-    "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1496307653780-42ee777d4833?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?auto=format&fit=crop&q=80"
-  ]
-];
-
 const ProjectPage = () => {
   const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<(typeof projectsData)[0] | null>(null);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [relatedProjects, setRelatedProjects] = useState<(typeof projectsData)>([]);
 
   useEffect(() => {
     // Scroll to top when component mounts
@@ -67,18 +29,57 @@ const ProjectPage = () => {
     if (id) {
       const projectId = parseInt(id);
       const foundProject = projectsData.find(p => p.id === projectId);
+      
       if (foundProject) {
         setProject(foundProject);
-        // Get additional images for the project's gallery
-        if (projectId > 0 && projectId <= projectGalleryImages.length) {
+        
+        // Set gallery images from project's galleryImages property or fall back to main image
+        if (foundProject.galleryImages && foundProject.galleryImages.length > 0) {
           setGalleryImages([
-            foundProject.imageUrl,
-            ...projectGalleryImages[projectId - 1]
+            foundProject.imageUrl, // Always include the main image first
+            ...foundProject.galleryImages
           ]);
         } else {
-          // If no gallery images exist for this project, just use the main image
           setGalleryImages([foundProject.imageUrl]);
         }
+        
+        // Find related projects
+        // First by subcategory, then by category, then by location
+        const relatedBySubcategory = projectsData
+          .filter(p => p.id !== projectId && !p.archived && p.subCategory === foundProject.subCategory)
+          .slice(0, 3);
+          
+        let related = [...relatedBySubcategory];
+        
+        // If we don't have 3 projects yet, add by main category
+        if (related.length < 3) {
+          const relatedByCategory = projectsData
+            .filter(p => 
+              p.id !== projectId && 
+              !p.archived && 
+              p.mainCategory === foundProject.mainCategory &&
+              !related.some(r => r.id === p.id) // Avoid duplicates
+            )
+            .slice(0, 3 - related.length);
+            
+          related = [...related, ...relatedByCategory];
+        }
+        
+        // If we still don't have 3 projects, add by location
+        if (related.length < 3) {
+          const relatedByLocation = projectsData
+            .filter(p => 
+              p.id !== projectId && 
+              !p.archived && 
+              p.location === foundProject.location &&
+              !related.some(r => r.id === p.id) // Avoid duplicates
+            )
+            .slice(0, 3 - related.length);
+            
+          related = [...related, ...relatedByLocation];
+        }
+        
+        setRelatedProjects(related);
       }
     }
   }, [id]);
@@ -210,7 +211,6 @@ const ProjectPage = () => {
                     ))}
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
@@ -222,28 +222,25 @@ const ProjectPage = () => {
             <h2 className="text-3xl font-light mb-8">Related Projects</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {projectsData
-                .filter(p => p.id !== project.id && p.category === project.category && !p.archived)
-                .slice(0, 3)
-                .map((relatedProject) => (
-                  <Link 
-                    key={relatedProject.id} 
-                    to={`/project/${relatedProject.id}`}
-                    className="group block"
-                  >
-                    <AspectRatio ratio={4/3}>
-                      <img 
-                        src={relatedProject.imageUrl} 
-                        alt={relatedProject.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    </AspectRatio>
-                    <div className="mt-4">
-                      <h3 className="text-xl font-medium">{relatedProject.title}</h3>
-                      <p className="text-gray-600">{relatedProject.category} | {relatedProject.year}</p>
-                    </div>
-                  </Link>
-                ))}
+              {relatedProjects.map((relatedProject) => (
+                <Link 
+                  key={relatedProject.id} 
+                  to={`/project/${relatedProject.id}`}
+                  className="group block"
+                >
+                  <AspectRatio ratio={4/3}>
+                    <img 
+                      src={relatedProject.imageUrl} 
+                      alt={relatedProject.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </AspectRatio>
+                  <div className="mt-4">
+                    <h3 className="text-xl font-medium">{relatedProject.title}</h3>
+                    <p className="text-gray-600">{relatedProject.category} | {relatedProject.year}</p>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         </section>

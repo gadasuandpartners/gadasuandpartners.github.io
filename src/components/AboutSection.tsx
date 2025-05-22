@@ -21,7 +21,7 @@ const AboutSection = () => {
           </div>
           
           <div className="flex flex-col justify-center animate-fade">
-            <h2 className="text-3xl md:text-4xl font-light mb-4">ABOUT THE ARCHITECT</h2>
+            <h2 className="text-3xl md:text-4xl font-light mb-4">ABOUT US</h2>
             <div className="w-20 h-0.5 bg-gray-900 mb-8"></div>
             
             <p className="text-gray-700 mb-6">

@@ -24,6 +24,7 @@ export interface Project {
 const saveProjectsToLocalStorage = (projects: Project[]) => {
   try {
     localStorage.setItem('projectsData', JSON.stringify(projects));
+    console.log('Projects saved to localStorage:', projects.length);
   } catch (error) {
     console.error('Failed to save projects to localStorage:', error);
   }
@@ -33,7 +34,9 @@ const saveProjectsToLocalStorage = (projects: Project[]) => {
 const loadProjectsFromLocalStorage = (): Project[] | null => {
   try {
     const storedProjects = localStorage.getItem('projectsData');
-    return storedProjects ? JSON.parse(storedProjects) : null;
+    const projects = storedProjects ? JSON.parse(storedProjects) : null;
+    console.log('Projects loaded from localStorage:', projects ? projects.length : 0);
+    return projects;
   } catch (error) {
     console.error('Failed to load projects from localStorage:', error);
     return null;
@@ -57,7 +60,8 @@ const initialProjectsData: Project[] = [
     status: "Completed",
     client: "Nordic Ventures Group",
     featured: true,
-    archived: false
+    archived: false,
+    galleryImages: []
   },
   {
     id: 2,
@@ -74,7 +78,8 @@ const initialProjectsData: Project[] = [
     status: "Completed",
     client: "EcoLiving Developments",
     featured: true,
-    archived: false
+    archived: false,
+    galleryImages: []
   },
   {
     id: 3,
@@ -91,7 +96,8 @@ const initialProjectsData: Project[] = [
     status: "Completed",
     client: "Barcelona Arts Foundation",
     featured: true,
-    archived: false
+    archived: false,
+    galleryImages: []
   },
   {
     id: 4,
@@ -108,7 +114,8 @@ const initialProjectsData: Project[] = [
     status: "Completed",
     client: "Islamic Heritage Foundation",
     featured: true,
-    archived: false
+    archived: false,
+    galleryImages: []
   },
   {
     id: 5,
@@ -125,7 +132,8 @@ const initialProjectsData: Project[] = [
     status: "Completed",
     client: "Pacific Homes",
     featured: true,
-    archived: false
+    archived: false,
+    galleryImages: []
   },
   {
     id: 6,
@@ -142,12 +150,20 @@ const initialProjectsData: Project[] = [
     status: "Completed",
     client: "Sahara Luxury Resorts",
     featured: true,
-    archived: false
+    archived: false,
+    galleryImages: []
   }
 ];
 
 // Load projects from localStorage or use defaults
-export let projectsData: Project[] = loadProjectsFromLocalStorage() || [...initialProjectsData];
+// Use a more reliable approach to ensure we don't lose data
+let loadedProjects = loadProjectsFromLocalStorage();
+export let projectsData: Project[] = loadedProjects || [...initialProjectsData];
+
+// If this is the first load (no projects in localStorage), initialize with defaults
+if (!loadedProjects) {
+  saveProjectsToLocalStorage(projectsData);
+}
 
 // Company social media links
 export interface SocialMediaLinks {
@@ -214,9 +230,9 @@ export const toggleProjectFeatured = (id: number) => {
   const projectIndex = projectsData.findIndex(project => project.id === id);
   if (projectIndex !== -1) {
     projectsData[projectIndex].featured = !projectsData[projectIndex].featured;
-    saveProjectsToLocalStorage(projectsData);
+    saveProjectsToLocalStorage([...projectsData]);
   }
-  return projectsData;
+  return [...projectsData];
 };
 
 export const updateProject = (id: number, updatedProject: Partial<Project>) => {
@@ -226,31 +242,31 @@ export const updateProject = (id: number, updatedProject: Partial<Project>) => {
       ...projectsData[projectIndex],
       ...updatedProject
     };
-    saveProjectsToLocalStorage(projectsData);
+    saveProjectsToLocalStorage([...projectsData]);
   }
-  return projectsData;
+  return [...projectsData];
 };
 
 export const replaceFeaturedProject = (unfeaturedId: number, featuredId: number) => {
   // First, check if we're trying to replace a project with itself
-  if (unfeaturedId === featuredId) return projectsData;
+  if (unfeaturedId === featuredId) return [...projectsData];
   
   // Get the projects
   const projectToUnfeature = projectsData.find(p => p.id === unfeaturedId);
   const projectToFeature = projectsData.find(p => p.id === featuredId);
   
   // Make sure both projects exist
-  if (!projectToUnfeature || !projectToFeature) return projectsData;
+  if (!projectToUnfeature || !projectToFeature) return [...projectsData];
   
   // Make sure the one to unfeature is actually featured
-  if (!projectToUnfeature.featured) return projectsData;
+  if (!projectToUnfeature.featured) return [...projectsData];
   
   // Toggle both projects
   projectToUnfeature.featured = false;
   projectToFeature.featured = true;
   
   // Save to localStorage
-  saveProjectsToLocalStorage(projectsData);
+  saveProjectsToLocalStorage([...projectsData]);
   
   return [...projectsData]; // Return new array for reactivity
 };
@@ -270,10 +286,10 @@ export const addProject = (project: Omit<Project, 'id' | 'archived'>) => {
     ...project,
     id: highestId + 1,
     archived: false,
-    galleryImages: [] // Initialize empty gallery
+    galleryImages: project.galleryImages || [] // Initialize gallery
   };
   
-  projectsData.push(newProject);
+  projectsData = [...projectsData, newProject];
   saveProjectsToLocalStorage(projectsData);
   return newProject;
 };
@@ -286,18 +302,18 @@ export const archiveProject = (id: number) => {
     if (projectsData[projectIndex].featured) {
       projectsData[projectIndex].featured = false;
     }
-    saveProjectsToLocalStorage(projectsData);
+    saveProjectsToLocalStorage([...projectsData]);
   }
-  return projectsData;
+  return [...projectsData];
 };
 
 export const unarchiveProject = (id: number) => {
   const projectIndex = projectsData.findIndex(project => project.id === id);
   if (projectIndex !== -1) {
     projectsData[projectIndex].archived = false;
-    saveProjectsToLocalStorage(projectsData);
+    saveProjectsToLocalStorage([...projectsData]);
   }
-  return projectsData;
+  return [...projectsData];
 };
 
 export const getArchivedProjects = () => {
@@ -310,8 +326,8 @@ export const getNonArchivedProjects = () => {
 
 export const deleteProject = (id: number) => {
   projectsData = projectsData.filter(project => project.id !== id);
-  saveProjectsToLocalStorage(projectsData);
-  return projectsData;
+  saveProjectsToLocalStorage([...projectsData]);
+  return [...projectsData];
 };
 
 // Function to add or update gallery images for a project
@@ -319,9 +335,9 @@ export const updateProjectGallery = (id: number, galleryImages: string[]) => {
   const projectIndex = projectsData.findIndex(project => project.id === id);
   if (projectIndex !== -1) {
     projectsData[projectIndex].galleryImages = galleryImages;
-    saveProjectsToLocalStorage(projectsData);
+    saveProjectsToLocalStorage([...projectsData]);
   }
-  return projectsData;
+  return [...projectsData];
 };
 
 // Function to get gallery images for a project
