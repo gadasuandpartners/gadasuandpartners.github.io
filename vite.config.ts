@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
+      external: ['/gadasuandpartners.github.io/assets/main-BcLe1lOH.js'],
     },
   },
 }));
