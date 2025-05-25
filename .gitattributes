@@ -1,0 +1,2 @@
+# Enforce correct MIME type for JavaScript files
+*.js text eol=lf
