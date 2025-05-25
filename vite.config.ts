@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: '/gadasuandpartners.github.io/',
+  base: '/your-repo-name/',
   server: {
     host: "::",
     port: 8080,
@@ -18,14 +18,6 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  build: {
-    rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, "index.html"),
-      },
-      external: ['/gadasuandpartners.github.io/assets/main-BcLe1lOH.js'],
     },
   },
 }));
