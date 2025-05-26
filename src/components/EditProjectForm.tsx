@@ -11,7 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { projectCategories, MainCategory, SubCategory } from "@/lib/projectCategories";
-import { Project, updateProject } from "@/lib/projectsData";
+import { Project } from "@/lib/projectsData";
+import { updateProjectSupabase } from "@/lib/projectsSupabase";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,7 +27,9 @@ interface EditProjectFormProps {
 export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
   const [title, setTitle] = useState(project.title);
   const [mainCategory, setMainCategory] = useState<MainCategory>(project.mainCategory);
-  const [subCategory, setSubCategory] = useState<SubCategory>(project.subCategory);
+  const [subCategory, setSubCategory] = useState<SubCategory>(
+    Array.isArray(project.subCategory) ? project.subCategory[0] : project.subCategory
+  );
   const [year, setYear] = useState(project.year);
   const [imageUrl, setImageUrl] = useState(project.imageUrl);
   const [description, setDescription] = useState(project.description);
@@ -111,7 +114,7 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
     setGalleryImages(updatedGallery);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!title || !mainCategory || !subCategory) {
@@ -129,33 +132,38 @@ export function EditProjectForm({ project, onUpdate }: EditProjectFormProps) {
       return;
     }
     
-    // For demonstration purposes, we'll use either the URL or the preview URL
-    // In a real app, you would upload the file to a server
-    const finalImageUrl = imageSource === "url" 
-      ? imageUrl 
-      : uploadPreview || project.imageUrl;
-    
-    // Update the project
-    updateProject(project.id, {
-      title,
-      category: subCategory, // For backward compatibility
-      mainCategory,
-      subCategory,
-      year,
-      imageUrl: finalImageUrl,
-      description,
-      location,
-      architect,
-      area,
-      status,
-      client,
-      galleryImages
-    });
-    
-    toast.success("Project updated successfully!");
-    
-    // Call the onUpdate callback
-    onUpdate();
+    try {
+      // For demonstration purposes, we'll use either the URL or the preview URL
+      // In a real app, you would upload the file to a server
+      const finalImageUrl = imageSource === "url"
+        ? imageUrl
+        : uploadPreview || project.imageUrl;
+      
+      // Update the project in Supabase
+      await updateProjectSupabase(project.id, {
+        title,
+        category: subCategory, // For backward compatibility
+        mainCategory,
+        subCategory: [subCategory], // Convert to array for consistency
+        year,
+        imageUrl: finalImageUrl,
+        description,
+        location,
+        architect,
+        area,
+        status,
+        client,
+        galleryImages
+      });
+      
+      toast.success("Project updated successfully!");
+      
+      // Call the onUpdate callback
+      onUpdate();
+    } catch (error) {
+      console.error('Error updating project:', error);
+      toast.error("Failed to update project. Please try again.");
+    }
   };
 
   return (

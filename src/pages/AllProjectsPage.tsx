@@ -1,11 +1,10 @@
-
 import { useState, useRef, useEffect } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProjectCard from '@/components/ProjectCard';
 import { ProjectsFilter } from '@/components/ProjectsFilter';
 import { Project } from '@/lib/projectsData';
-import { projectsData } from '@/lib/projectsData';
+import { fetchProjects } from '@/lib/projectsSupabase';
 import { MainCategory, SubCategory } from '@/lib/projectCategories';
 import Logo from '@/components/Logo';
 import { Button } from '@/components/ui/button';
@@ -15,18 +14,23 @@ const AllProjectsPage = () => {
   const [selectedMainCategory, setSelectedMainCategory] = useState<MainCategory | null>(null);
   const [selectedSubCategories, setSelectedSubCategories] = useState<SubCategory[]>([]);
   const [visibleCount, setVisibleCount] = useState(20);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch projects from Supabase
+  useEffect(() => {
+    setLoading(true);
+    fetchProjects()
+      .then(data => setProjects(data))
+      .finally(() => setLoading(false));
+  }, []);
 
   // Filter projects based on selected categories
-  const filteredProjects = projectsData.filter((project: Project) => {
-    // If no main category is selected, show all
+  const filteredProjects = projects.filter((project: Project) => {
     if (!selectedMainCategory) return true;
-
-    // If main category is selected but no subcategory, show all from main category
     if (selectedMainCategory && selectedSubCategories.length === 0) {
       return project.mainCategory === selectedMainCategory;
     }
-
-    // If both main category and subcategories are selected
     return (
       project.mainCategory === selectedMainCategory &&
       (
@@ -71,16 +75,20 @@ const AllProjectsPage = () => {
             <h2 className="text-3xl md:text-4xl font-light mb-4">ALL PROJECTS</h2>
             <div className="w-20 h-0.5 bg-gray-900"></div>
           </div>
-          
-          <ProjectsFilter 
+
+          <ProjectsFilter
             selectedMainCategory={selectedMainCategory}
             setSelectedMainCategory={setSelectedMainCategory}
             selectedSubCategories={selectedSubCategories}
             setSelectedSubCategories={setSelectedSubCategories}
             clearFilters={clearFilters}
           />
-          
-          {filteredProjects.length > 0 ? (
+
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Loading projects...</p>
+            </div>
+          ) : filteredProjects.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredProjects.slice(0, visibleCount).map((project, index) => (
@@ -129,4 +137,3 @@ const AllProjectsPage = () => {
 };
 
 export default AllProjectsPage;
-

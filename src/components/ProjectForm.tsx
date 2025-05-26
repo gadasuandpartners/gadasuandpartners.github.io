@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { projectCategories, MainCategory, SubCategory } from "@/lib/projectCategories";
-import { addProject } from "@/lib/projectsData";
+import { addProjectSupabase } from "@/lib/projectsSupabase";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -104,7 +104,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
     setGalleryImages(updatedGallery);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!title || !mainCategory || subCategory.length === 0) {
@@ -122,62 +122,68 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
       return;
     }
     
-    // For demonstration purposes, we'll use either the URL or the preview URL
-    // In a real app, you would upload the file to a server
-    const finalImageUrl = imageSource === "url" 
-      ? imageUrl 
-      : uploadPreview || "/placeholder.svg";
-    
-    // Add the new project
-    const newProject = addProject({
-      title,
-      category: subCategory[0] || "", // For backward compatibility
-      mainCategory: mainCategory as MainCategory,
-      subCategory: subCategory,
-      year,
-      imageUrl: finalImageUrl,
-      description,
-      location,
-      architect,
-      area,
-      status,
-      client,
-      featured: false, // New projects are not featured by default
-      galleryImages: galleryImages // Include gallery images
-    });
-    
-    toast.success("Project added successfully!");
-    
-    // Reset the form
-    setTitle("");
-    setMainCategory("");
-    setSubCategory([]);
-    setYear(new Date().getFullYear().toString());
-    setImageUrl("");
-    setDescription("");
-    setLocation("");
-    setArchitect("Gadasu & Partners");
-    setArea("");
-    setStatus("Planned");
-    setClient("");
-    setSelectedFile(null);
-    setUploadPreview(null);
-    setImageSource("url");
-    setGalleryImages([]);
-    setNewGalleryImageUrl("");
-    setGalleryImageSource("url");
-    
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-    
-    if (galleryFileInputRef.current) {
-      galleryFileInputRef.current.value = "";
-    }
-    
-    // Call the callback if provided
-    if (onProjectAdded) {
-      onProjectAdded();
+    try {
+      // For demonstration purposes, we'll use either the URL or the preview URL
+      // In a real app, you would upload the file to a server
+      const finalImageUrl = imageSource === "url"
+        ? imageUrl
+        : uploadPreview || "/placeholder.svg";
+      
+      // Add the new project to Supabase
+      await addProjectSupabase({
+        title,
+        category: subCategory[0] || "", // For backward compatibility
+        mainCategory: mainCategory as MainCategory,
+        subCategory: subCategory,
+        year,
+        imageUrl: finalImageUrl,
+        description,
+        location,
+        architect,
+        area,
+        status,
+        client,
+        featured: false, // New projects are not featured by default
+        archived: false,
+        galleryImages: galleryImages // Include gallery images
+      });
+      
+      toast.success("Project added successfully!");
+      
+      // Reset the form
+      setTitle("");
+      setMainCategory("");
+      setSubCategory([]);
+      setYear(new Date().getFullYear().toString());
+      setImageUrl("");
+      setDescription("");
+      setLocation("");
+      setArchitect("Gadasu & Partners");
+      setArea("");
+      setStatus("Planned");
+      setClient("");
+      setSelectedFile(null);
+      setUploadPreview(null);
+      setImageSource("url");
+      setGalleryImages([]);
+      setNewGalleryImageUrl("");
+      setGalleryImageSource("url");
+      
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      
+      if (galleryFileInputRef.current) {
+        galleryFileInputRef.current.value = "";
+      }
+      
+      // Call the callback if provided
+      if (onProjectAdded) {
+        onProjectAdded();
+      }
+    } catch (error) {
+      console.error('Error adding project:', error);
+      toast.error("Failed to add project. Please try again.");
     }
   };
 

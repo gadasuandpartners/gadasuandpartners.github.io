@@ -4,11 +4,12 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { projectsData } from '@/lib/projectsData';
+import { Project } from '@/lib/projectsData';
+import { getProjectByIdSupabase, getRelatedProjectsSupabase } from '@/lib/projectsSupabase';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { 
+import {
   Carousel,
   CarouselContent,
   CarouselItem,
@@ -18,74 +19,75 @@ import {
 
 const ProjectPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [project, setProject] = useState<(typeof projectsData)[0] | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
-  const [relatedProjects, setRelatedProjects] = useState<(typeof projectsData)>([]);
+  const [relatedProjects, setRelatedProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
     
-    if (id) {
-      const projectId = parseInt(id);
-      const foundProject = projectsData.find(p => p.id === projectId);
+    const loadProject = async () => {
+      if (!id) return;
       
-      if (foundProject) {
-        setProject(foundProject);
+      setLoading(true);
+      try {
+        const projectId = parseInt(id);
+        const foundProject = await getProjectByIdSupabase(projectId);
         
-        // Set gallery images from project's galleryImages property or fall back to main image
-        if (foundProject.galleryImages && foundProject.galleryImages.length > 0) {
-          setGalleryImages([
-            foundProject.imageUrl, // Always include the main image first
-            ...foundProject.galleryImages
-          ]);
-        } else {
-          setGalleryImages([foundProject.imageUrl]);
-        }
-        
-        // Find related projects
-        // First by subcategory, then by category, then by location
-        const relatedBySubcategory = projectsData
-          .filter(p => p.id !== projectId && !p.archived && p.subCategory === foundProject.subCategory)
-          .slice(0, 3);
+        if (foundProject) {
+          setProject(foundProject);
           
-        let related = [...relatedBySubcategory];
-        
-        // If we don't have 3 projects yet, add by main category
-        if (related.length < 3) {
-          const relatedByCategory = projectsData
-            .filter(p => 
-              p.id !== projectId && 
-              !p.archived && 
-              p.mainCategory === foundProject.mainCategory &&
-              !related.some(r => r.id === p.id) // Avoid duplicates
-            )
-            .slice(0, 3 - related.length);
-            
-          related = [...related, ...relatedByCategory];
+          // Set gallery images from project's galleryImages property or fall back to main image
+          if (foundProject.galleryImages && foundProject.galleryImages.length > 0) {
+            setGalleryImages([
+              foundProject.imageUrl, // Always include the main image first
+              ...foundProject.galleryImages
+            ]);
+          } else {
+            setGalleryImages([foundProject.imageUrl]);
+          }
+          
+          // Get related projects from Supabase
+          const related = await getRelatedProjectsSupabase(projectId, foundProject);
+          setRelatedProjects(related);
         }
-        
-        // If we still don't have 3 projects, add by location
-        if (related.length < 3) {
-          const relatedByLocation = projectsData
-            .filter(p => 
-              p.id !== projectId && 
-              !p.archived && 
-              p.location === foundProject.location &&
-              !related.some(r => r.id === p.id) // Avoid duplicates
-            )
-            .slice(0, 3 - related.length);
-            
-          related = [...related, ...relatedByLocation];
-        }
-        
-        setRelatedProjects(related);
+      } catch (error) {
+        console.error('Error loading project:', error);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+    
+    loadProject();
   }, [id]);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <div className="flex items-center justify-center pt-32">
+          <p className="text-muted-foreground">Loading project...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!project) {
-    return <div className="min-h-screen flex items-center justify-center">Project not found</div>;
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <div className="flex items-center justify-center pt-32">
+          <div className="text-center">
+            <h1 className="text-2xl font-light mb-4">Project not found</h1>
+            <Link to="/#projects" className="text-primary hover:underline">
+              Back to projects
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -246,7 +248,11 @@ const ProjectPage = () => {
                   </AspectRatio>
                   <div className="mt-4">
                     <h3 className="text-xl font-medium">{relatedProject.title}</h3>
-                    <p className="text-gray-600">{relatedProject.category} | {relatedProject.year}</p>
+                    <p className="text-gray-600">
+                      {Array.isArray(relatedProject.subCategory)
+                        ? relatedProject.subCategory.join(", ")
+                        : relatedProject.subCategory} | {relatedProject.year}
+                    </p>
                   </div>
                 </Link>
               ))}

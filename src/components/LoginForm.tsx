@@ -1,53 +1,58 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { login } from '@/lib/auth';
 import { useToast } from '@/components/ui/use-toast';
+import { signInWithEmail, signInWithGoogle } from '@/lib/authSupabase';
+
+const ADMIN_EMAIL = "sstonelabs@gmail.com";
 
 const LoginForm = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
-      const success = login(username, password);
-      
-      if (success) {
-        toast({
-          title: "Login successful",
-          description: "Welcome to the admin dashboard",
-        });
+    try {
+      const { user } = await signInWithEmail(email, password);
+      if (user && user.email === ADMIN_EMAIL) {
+        toast({ title: "Login successful", description: "Welcome to the admin dashboard" });
         navigate('/admin');
       } else {
-        toast({
-          title: "Login failed",
-          description: "Invalid username or password",
-          variant: "destructive",
-        });
+        toast({ title: "Access denied", description: "You are not authorized", variant: "destructive" });
       }
-      
+    } catch (error: any) {
+      toast({ title: "Login failed", description: error.message, variant: "destructive" });
+    }
+    setIsLoading(false);
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    try {
+      await signInWithGoogle();
+      // Supabase will redirect on success
+    } catch (error: any) {
+      toast({ title: "Google login failed", description: error.message, variant: "destructive" });
       setIsLoading(false);
-    }, 1000); // Simulate network request
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
       <div className="space-y-2">
-        <Label htmlFor="username">Username</Label>
+        <Label htmlFor="email">Email</Label>
         <Input
-          id="username"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
           placeholder=""
         />
@@ -67,6 +72,9 @@ const LoginForm = () => {
 
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? 'Logging in...' : 'Sign In'}
+      </Button>
+      <Button type="button" className="w-full" variant="outline" onClick={handleGoogleLogin} disabled={isLoading}>
+        {isLoading ? 'Redirecting...' : 'Sign In with Google'}
       </Button>
     </form>
   );
