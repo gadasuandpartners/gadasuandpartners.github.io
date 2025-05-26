@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProjectCard from '@/components/ProjectCard';
@@ -14,6 +14,7 @@ const AllProjectsPage = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [selectedMainCategory, setSelectedMainCategory] = useState<MainCategory | null>(null);
   const [selectedSubCategories, setSelectedSubCategories] = useState<SubCategory[]>([]);
+  const [visibleCount, setVisibleCount] = useState(20);
 
   // Filter projects based on selected categories
   const filteredProjects = projectsData.filter((project: Project) => {
@@ -27,14 +28,38 @@ const AllProjectsPage = () => {
 
     // If both main category and subcategories are selected
     return (
-      project.mainCategory === selectedMainCategory && 
-      selectedSubCategories.includes(project.subCategory)
+      project.mainCategory === selectedMainCategory &&
+      (
+        Array.isArray(project.subCategory)
+          ? project.subCategory.some(sub => selectedSubCategories.includes(sub))
+          : selectedSubCategories.includes(project.subCategory as SubCategory)
+      )
     );
   });
+
+  // Infinite scroll: load more projects as user scrolls
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 300
+      ) {
+        setVisibleCount((prev) => {
+          if (prev < filteredProjects.length) {
+            return prev + 20;
+          }
+          return prev;
+        });
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [filteredProjects.length]);
 
   const clearFilters = () => {
     setSelectedMainCategory(null);
     setSelectedSubCategories([]);
+    setVisibleCount(20);
   };
 
   return (
@@ -56,27 +81,40 @@ const AllProjectsPage = () => {
           />
           
           {filteredProjects.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProjects.map((project, index) => (
-                <div key={project.id} className="project-item animate-fade">
-                  <ProjectCard
-                    id={project.id}
-                    title={project.title}
-                    category={project.subCategory}
-                    year={project.year}
-                    imageUrl={project.imageUrl}
-                    index={index}
-                  />
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredProjects.slice(0, visibleCount).map((project, index) => (
+                  <div key={project.id} className="project-item animate-fade">
+                    <ProjectCard
+                      id={project.id}
+                      title={project.title}
+                      category={
+                        Array.isArray(project.subCategory)
+                          ? project.subCategory.join(", ")
+                          : project.subCategory
+                      }
+                      year={project.year}
+                      imageUrl={project.imageUrl}
+                      index={index}
+                    />
+                  </div>
+                ))}
+              </div>
+              {visibleCount < filteredProjects.length && (
+                <div className="flex justify-center mt-8">
+                  <Button onClick={() => setVisibleCount((prev) => prev + 20)}>
+                    Load More
+                  </Button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-12">
               <Logo variant="short" className="mx-auto text-3xl mb-4" />
               <p className="text-muted-foreground">No projects match the selected criteria.</p>
-              <Button 
-                className="mt-4" 
-                variant="outline" 
+              <Button
+                className="mt-4"
+                variant="outline"
                 onClick={clearFilters}
               >
                 Clear Filters

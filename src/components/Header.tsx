@@ -51,10 +51,30 @@ const Header = () => {
         {/* Desktop Navigation */}
         <nav className="hidden lg:block">
           <ul className="flex space-x-10 font-inter text-sm">
-            <li><a href="#home" className="hover:text-black/70 transition-colors">HOME</a></li>
-            <li><a href="#projects" className="hover:text-black/70 transition-colors">PROJECTS</a></li>
-            <li><a href="#about" className="hover:text-black/70 transition-colors">ABOUT</a></li>
-            <li><a href="#contact" className="hover:text-black/70 transition-colors">CONTACT</a></li>
+            <li><a href="#home" className="hover:text-black/70 transition-colors" onClick={e => {
+              if (window.location.pathname !== "/") {
+                e.preventDefault();
+                window.location.href = "/#home";
+              }
+            }}>HOME</a></li>
+            <li><a href="#projects" className="hover:text-black/70 transition-colors" onClick={e => {
+              if (window.location.pathname !== "/") {
+                e.preventDefault();
+                window.location.href = "/#projects";
+              }
+            }}>PROJECTS</a></li>
+            <li><a href="#about" className="hover:text-black/70 transition-colors" onClick={e => {
+              if (window.location.pathname !== "/") {
+                e.preventDefault();
+                window.location.href = "/#about";
+              }
+            }}>ABOUT</a></li>
+            <li><a href="#contact" className="hover:text-black/70 transition-colors" onClick={e => {
+              if (window.location.pathname !== "/") {
+                e.preventDefault();
+                window.location.href = "/#contact";
+              }
+            }}>CONTACT</a></li>
           </ul>
         </nav>
       </div>
@@ -68,7 +88,7 @@ const Header = () => {
           <ul className="space-y-6 font-inter text-lg">
             <li>
               <a 
-                href="#home" 
+                href="#home"
                 className="block py-2 hover:text-black/70 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -77,7 +97,7 @@ const Header = () => {
             </li>
             <li>
               <a 
-                href="#projects" 
+                href="#projects"
                 className="block py-2 hover:text-black/70 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -86,7 +106,7 @@ const Header = () => {
             </li>
             <li>
               <a 
-                href="#about" 
+                href="#about"
                 className="block py-2 hover:text-black/70 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -95,7 +115,7 @@ const Header = () => {
             </li>
             <li>
               <a 
-                href="#contact" 
+                href="#contact"
                 className="block py-2 hover:text-black/70 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >

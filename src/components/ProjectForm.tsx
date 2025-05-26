@@ -24,7 +24,7 @@ interface ProjectFormProps {
 export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
   const [title, setTitle] = useState("");
   const [mainCategory, setMainCategory] = useState<MainCategory | "">("");
-  const [subCategory, setSubCategory] = useState<SubCategory | "">("");
+  const [subCategory, setSubCategory] = useState<SubCategory[]>([]);
   const [year, setYear] = useState(new Date().getFullYear().toString());
   const [imageUrl, setImageUrl] = useState("");
   const [description, setDescription] = useState("");
@@ -107,7 +107,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!title || !mainCategory || !subCategory) {
+    if (!title || !mainCategory || subCategory.length === 0) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -131,9 +131,9 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
     // Add the new project
     const newProject = addProject({
       title,
-      category: subCategory, // For backward compatibility
+      category: subCategory[0] || "", // For backward compatibility
       mainCategory: mainCategory as MainCategory,
-      subCategory: subCategory as SubCategory,
+      subCategory: subCategory,
       year,
       imageUrl: finalImageUrl,
       description,
@@ -151,7 +151,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
     // Reset the form
     setTitle("");
     setMainCategory("");
-    setSubCategory("");
+    setSubCategory([]);
     setYear(new Date().getFullYear().toString());
     setImageUrl("");
     setDescription("");
@@ -211,7 +211,7 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
             value={mainCategory} 
             onValueChange={(value) => {
               setMainCategory(value as MainCategory);
-              setSubCategory(""); // Reset subcategory when main category changes
+              setSubCategory([]); // Reset subcategory when main category changes
             }}
             required
           >
@@ -230,23 +230,28 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
         
         <div className="space-y-2">
           <Label htmlFor="sub-category">Subcategory *</Label>
-          <Select 
-            value={subCategory}
-            onValueChange={(value) => setSubCategory(value)}
-            disabled={!mainCategory}
-            required
-          >
-            <SelectTrigger id="sub-category">
-              <SelectValue placeholder="Select subcategory" />
-            </SelectTrigger>
-            <SelectContent>
+          <div className="space-y-2">
+            <Label htmlFor="sub-category">Subcategories *</Label>
+            <div className="border rounded-md p-2 flex flex-wrap gap-2 min-h-[40px]">
               {filteredSubcategories.map((sub) => (
-                <SelectItem key={sub} value={sub}>
-                  {sub}
-                </SelectItem>
+                <label key={sub} className="flex items-center gap-1 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    value={sub}
+                    checked={subCategory.includes(sub)}
+                    onChange={e => {
+                      if (e.target.checked) {
+                        setSubCategory([...subCategory, sub]);
+                      } else {
+                        setSubCategory(subCategory.filter(s => s !== sub));
+                      }
+                    }}
+                  />
+                  <span>{sub}</span>
+                </label>
               ))}
-            </SelectContent>
-          </Select>
+            </div>
+          </div>
         </div>
         
         <div className="space-y-2 col-span-1 md:col-span-2">
@@ -270,11 +275,18 @@ export function ProjectForm({ onProjectAdded }: ProjectFormProps) {
               />
               {imageUrl && (
                 <div className="mt-2 border rounded-md overflow-hidden">
-                  <img 
-                    src={imageUrl} 
-                    alt="Preview" 
+                  <img
+                    src={imageUrl}
+                    alt="Preview"
                     className="w-full h-40 object-cover"
+                    onError={e => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "/placeholder.svg";
+                      e.currentTarget.alt = "Image failed to load";
+                    }}
                   />
+                  {/* Optionally show a message if the image fails */}
+                  {/* <span className="text-xs text-red-500">If the image does not appear, check the URL or try another image.</span> */}
                 </div>
               )}
             </TabsContent>

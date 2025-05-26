@@ -5,15 +5,34 @@ import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Mail, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+import emailjs from '@emailjs/browser';
+
 const ContactSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Message sent!",
-      description: "Thank you for your message. We'll get back to you soon.",
+
+    const form = e.target as HTMLFormElement;
+
+    emailjs.sendForm(
+      'service_tsgic8t', // Your EmailJS service ID
+      'template_bj4k6os', // Your EmailJS template ID
+      form,
+      'fHGi-baheSkdM0wdv' // Your EmailJS public key
+    )
+    .then(() => {
+      toast({
+        title: "Message sent!",
+        description: "Thank you for your message. We'll get back to you soon.",
+      });
+    })
+    .catch(() => {
+      toast({
+        title: "Error",
+        description: "Failed to send the message. Please try again later.",
+      });
     });
   };
 
@@ -39,6 +58,7 @@ const ContactSection = () => {
                   </label>
                   <Input
                     id="name"
+                    name="name"
                     type="text"
                     required
                     className="w-full border-gray-300 focus:ring-black focus:border-black"
@@ -51,6 +71,7 @@ const ContactSection = () => {
                   </label>
                   <Input
                     id="email"
+                    name="email"
                     type="email"
                     required
                     className="w-full border-gray-300 focus:ring-black focus:border-black"
@@ -64,6 +85,7 @@ const ContactSection = () => {
                 </label>
                 <Input
                   id="subject"
+                  name="subject"
                   type="text"
                   required
                   className="w-full border-gray-300 focus:ring-black focus:border-black"
@@ -76,6 +98,7 @@ const ContactSection = () => {
                 </label>
                 <Textarea
                   id="message"
+                  name="message"
                   required
                   rows={5}
                   className="w-full border-gray-300 focus:ring-black focus:border-black"

@@ -110,7 +110,16 @@ const ProjectPage = () => {
             </Link>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-light mb-4">{project.title}</h1>
             <div className="flex flex-wrap gap-x-8 gap-y-2">
-              <p className="text-white/80">{project.category}</p>
+              <div className="flex flex-wrap gap-2">
+                {Array.isArray(project.subCategory)
+                  ? project.subCategory.map((sub, i) => (
+                      <span key={i} className="bg-white/20 text-white/90 px-2 py-1 rounded text-xs">
+                        {sub}
+                      </span>
+                    ))
+                  : <span className="bg-white/20 text-white/90 px-2 py-1 rounded text-xs">{project.subCategory}</span>
+                }
+              </div>
               <p className="text-white/80">{project.location}</p>
               <p className="text-white/80">{project.year}</p>
             </div>
