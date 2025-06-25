@@ -1,7 +1,5 @@
-
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Link } from 'react-router-dom';
 import Logo from './Logo';
 
 const Header = () => {
@@ -23,9 +21,9 @@ const Header = () => {
       isScrolled ? "bg-white/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
     )}>
       <div className="flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <Logo variant="full" />
-        </Link>
+        </div>
         
         {/* Mobile Menu Button */}
         <button 
