@@ -19,22 +19,40 @@ const getOptimizedImageUrl = (url: string, width: number, quality: number = 75) 
   return url;
 };
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ id, title, category, year, imageUrl, index }) => {
+const ProjectCard: React.FC<ProjectCardProps> = React.memo(({ id, title, category, year, imageUrl, index }) => {
+  const isEager = index < 3;
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [shouldLoadImage, setShouldLoadImage] = useState(false);
+  const [shouldLoadImage, setShouldLoadImage] = useState(isEager);
   const cardRef = useRef<HTMLDivElement>(null);
+  // Debug: track component lifecycle
+  useEffect(() => {
+    console.debug(`[ProjectCard] mounted → id: ${id}, index: ${index}`);
+    return () => {
+      console.debug(`[ProjectCard] unmounted ← id: ${id}, index: ${index}`);
+    };
+  }, [id, index]);
+  // Log whenever these state values change
+  useEffect(() => {
+    console.debug(`[ProjectCard] shouldLoadImage changed → id: ${id}, index: ${index}, value: ${shouldLoadImage}`);
+  }, [shouldLoadImage, id, index]);
 
   useEffect(() => {
+    console.debug(`[ProjectCard] imageLoaded changed → id: ${id}, index: ${index}, value: ${imageLoaded}`);
+  }, [imageLoaded, id, index]);
+
+  useEffect(() => {
+    if (isEager) return; // Eager cards load immediately
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
+          console.debug(`[ProjectCard] Intersection observed, start loading image → id: ${id}, index: ${index}`);
           setShouldLoadImage(true);
           observer.disconnect();
         }
       },
       {
-        rootMargin: "50px",
-        threshold: 0.1
+        rootMargin: "200px",
+        threshold: 0.01
       }
     );
 
@@ -43,7 +61,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ id, title, category, year, im
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [isEager, id, index]);
 
   return (
     <div ref={cardRef}>
@@ -75,7 +93,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ id, title, category, year, im
                 "group-hover:scale-105",
                 imageLoaded ? "opacity-100" : "opacity-0"
               )}
-              onLoad={() => setImageLoaded(true)}
+              onLoad={() => {
+                console.debug(`[ProjectCard] image onLoad fired → id: ${id}, index: ${index}`);
+                setImageLoaded(true);
+              }}
             />
           )}
           
@@ -91,6 +112,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ id, title, category, year, im
       </Link>
     </div>
   );
-};
+});
 
 export default ProjectCard;
