@@ -2,7 +2,8 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import queryClient from './queryClient';
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
@@ -13,7 +14,6 @@ import LoginPage from "./pages/LoginPage";
 import AllProjectsPage from "./pages/AllProjectsPage";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
 
 const AuthHandler = () => {
   const navigate = useNavigate();

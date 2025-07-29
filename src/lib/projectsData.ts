@@ -1,5 +1,6 @@
 
 import { MainCategory, SubCategory } from './projectCategories';
+import { fetchProjects } from './projectsSupabase';
 
 export interface Project {
   id: number;
@@ -160,6 +161,40 @@ const initialProjectsData: Project[] = [
 // Use a more reliable approach to ensure we don't lose data
 let loadedProjects = loadProjectsFromLocalStorage();
 export let projectsData: Project[] = loadedProjects || [...initialProjectsData];
+
+// Returns all current non-archived projects
+export function getAllProjects(): Project[] {
+  return projectsData.filter(project => !project.archived);
+}
+
+// Listeners to notify after sync
+const syncListeners: (() => void)[] = [];
+export function onProjectsSync(callback: () => void) {
+  syncListeners.push(callback);
+  return () => {
+    // Remove callback on cleanup
+    const idx = syncListeners.indexOf(callback);
+    if (idx !== -1) syncListeners.splice(idx, 1);
+  };
+}
+
+// Sync projects from Supabase in the background
+export async function syncProjectsFromSupabase() {
+  console.log('[DEBUG] syncProjectsFromSupabase called');
+  try {
+    const supabaseProjects = await fetchProjects();
+    console.log('[DEBUG] Supabase returned', supabaseProjects.length, 'projects:', supabaseProjects.map(p => p.id));
+    if (Array.isArray(supabaseProjects) && supabaseProjects.length > 0) {
+      projectsData = supabaseProjects;
+      saveProjectsToLocalStorage(projectsData);
+      console.log('Projects synced from Supabase:', projectsData.length);
+      // Notify listeners
+      syncListeners.forEach(cb => cb());
+    }
+  } catch (error) {
+    console.error('[DEBUG] Supabase fetch failed:', error);
+  }
+}
 
 // If this is the first load (no projects in localStorage), initialize with defaults
 if (!loadedProjects) {

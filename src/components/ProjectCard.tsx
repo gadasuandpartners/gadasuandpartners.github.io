@@ -75,7 +75,7 @@ const ProjectCard: React.FC<ProjectCardProps> = React.memo(({ id, title, categor
         <AspectRatio ratio={4/3}>
           {/* Static placeholder while loading */}
           {(!shouldLoadImage || !imageLoaded) && (
-            <div className="absolute inset-0 w-full h-full bg-gray-100" />
+            <div className="absolute inset-0 w-full h-full bg-gray-100 animate-pulse rounded-md" />
           )}
           
           {shouldLoadImage && (
@@ -88,6 +88,7 @@ const ProjectCard: React.FC<ProjectCardProps> = React.memo(({ id, title, categor
               `}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               alt={title}
+              loading="lazy"
               className={cn(
                 "w-full h-full object-cover transition-all duration-500",
                 "group-hover:scale-105",

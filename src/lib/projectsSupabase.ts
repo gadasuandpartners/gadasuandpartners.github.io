@@ -2,9 +2,9 @@ import { supabase, isConnectionOffline } from "./supabaseClient";
 import { Project } from "./projectsData";
 
 // Constants
-const TABLE = "projects";
+const TABLE = "project_lite";
 const ROW_SIZE = 3;
-const PAGE_SIZE = ROW_SIZE;
+const PAGE_SIZE = 9; // Show 9 projects per page for infinite scroll
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 // Cache management
@@ -91,19 +91,19 @@ export async function fetchProjectRow(
   try {
     let query = supabase
       .from(TABLE)
-      .select('*', { count: 'exact' })
+      .select('id,title,maincategory,subcategory,year,imageurl', { count: 'exact' })
       .eq('archived', false)
       .order('id', { ascending: true })
       .range(start, end);
 
     if (filters?.mainCategory) {
       console.log('Applying mainCategory filter:', filters.mainCategory);
-      query = query.eq('mainCategory', filters.mainCategory);
+      query = query.eq('maincategory', filters.mainCategory);
     }
 
     if (filters?.subCategories?.length) {
       console.log('Applying subCategories filter:', filters.subCategories);
-      query = query.contains('subCategory', filters.subCategories);
+      query = query.contains('subcategory', filters.subCategories);
     }
 
     const { data, error, count } = await query;
@@ -118,11 +118,21 @@ export async function fetchProjectRow(
     const duration = performance.now() - startTime;
     console.log(`Fetched row ${page} (${data.length} projects) in ${duration.toFixed(0)}ms`);
 
-    const result = {
-      data: data as Project[],
-      count: count || 0,
-      hasMore: count ? (page * PAGE_SIZE) < count : false
-    };
+    const mappedData = (data as any[]).map(p => ({
+  id: p.id,
+  title: p.title,
+  mainCategory: p.maincategory,
+  subCategory: p.subcategory,
+  year: p.year,
+  imageUrl: p.imageurl,
+  featured: p.featured,
+  archived: p.archived,
+}));
+const result = {
+  data: mappedData,
+  count: count || 0,
+  hasMore: count ? (page * PAGE_SIZE) < count : false
+};
 
     setCache(cacheKey, result);
     return result;
@@ -149,20 +159,29 @@ export async function fetchProjects(): Promise<Project[]> {
   try {
     const { data, error } = await supabase
       .from(TABLE)
-      .select("*")
+      .select('id,title,maincategory,subcategory,year,imageurl,featured,archived')
       .eq("archived", false)
       .order('id', { ascending: true });
     
     if (error) throw error;
     if (!data) return [];
 
-    const result = data as Project[];
-    setCache(cacheKey, result);
-    
-    const duration = performance.now() - start;
-    console.log(`Fetched ${result.length} projects in ${duration.toFixed(0)}ms`);
-    
-    return result;
+    const result = (data as any[]).map(p => ({
+  id: p.id,
+  title: p.title,
+  mainCategory: p.maincategory,
+  subCategory: p.subcategory,
+  year: p.year,
+  imageUrl: p.imageurl,
+  featured: p.featured,
+  archived: p.archived,
+}));
+setCache(cacheKey, result);
+
+const duration = performance.now() - start;
+console.log(`Fetched ${result.length} projects in ${duration.toFixed(0)}ms`);
+
+return result;
   } catch (error) {
     console.error('Error in fetchProjects:', error);
     throw error;
@@ -181,7 +200,7 @@ export async function fetchArchivedProjects(): Promise<Project[]> {
   try {
     const { data, error } = await supabase
       .from(TABLE)
-      .select("*")
+      .select('id,title,mainCategory,subCategory,year,imageUrl')
       .eq("archived", true)
       .order('id', { ascending: true });
     
@@ -300,8 +319,8 @@ export async function getProjectByIdSupabase(id: number): Promise<Project | null
 
   try {
     const { data, error } = await supabase
-      .from(TABLE)
-      .select("*")
+      .from('projects')
+      .select("id,title,mainCategory,subCategory,year,imageUrl,description,location,architect,area,status,client,featured,archived,galleryImages")
       .eq("id", id)
       .eq("archived", false)
       .single();
@@ -340,7 +359,7 @@ export async function getRelatedProjectsSupabase(projectId: number, project: Pro
     // First try to get projects with same subcategory
     const { data: relatedBySubcategory, error: subError } = await supabase
       .from(TABLE)
-      .select("*")
+      .select('id,title,mainCategory,subCategory,year,imageUrl')
       .eq("archived", false)
       .neq("id", projectId)
       .contains("subCategory", project.subCategory)
@@ -354,7 +373,7 @@ export async function getRelatedProjectsSupabase(projectId: number, project: Pro
     if (related.length < 3) {
       const { data: relatedByCategory } = await supabase
         .from(TABLE)
-        .select("*")
+        .select('id,title,mainCategory,subCategory,year,imageUrl')
         .eq("archived", false)
         .eq("mainCategory", project.mainCategory)
         .neq("id", projectId)
@@ -370,7 +389,7 @@ export async function getRelatedProjectsSupabase(projectId: number, project: Pro
     if (related.length < 3) {
       const { data: relatedByLocation } = await supabase
         .from(TABLE)
-        .select("*")
+        .select('id,title,mainCategory,subCategory,year,imageUrl')
         .eq("archived", false)
         .eq("location", project.location)
         .neq("id", projectId)
@@ -426,7 +445,7 @@ export async function getFeaturedProjectsSupabase(isRandom = false): Promise<Pro
     if (isRandom) {
       const { data, error } = await supabase
         .from(TABLE)
-        .select("*")
+        .select('id,title,maincategory,subcategory,year,imageurl,featured,archived')
         .eq("archived", false)
         .limit(6);
       
@@ -448,7 +467,7 @@ export async function getFeaturedProjectsSupabase(isRandom = false): Promise<Pro
     // Instead of using materialized view, query featured projects directly
     const { data, error } = await supabase
       .from(TABLE)
-      .select("*")
+      .select('id,title,maincategory,subcategory,year,imageurl,featured,archived')
       .eq("archived", false)
       .eq("featured", true)
       .limit(6);
@@ -458,9 +477,9 @@ export async function getFeaturedProjectsSupabase(isRandom = false): Promise<Pro
     
     if (result.length < 6) {
       // If we don't have enough featured projects, add some non-featured ones
-      const { data: additional } = await supabase
+      const { data: additional, error: additionalError } = await supabase
         .from(TABLE)
-        .select("*")
+        .select('id,title,maincategory,subcategory,year,imageurl,featured,archived')
         .eq("archived", false)
         .eq("featured", false)
         .limit(6 - result.length);

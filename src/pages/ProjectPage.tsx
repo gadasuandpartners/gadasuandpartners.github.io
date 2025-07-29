@@ -4,8 +4,8 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Project } from '@/lib/projectsData';
-import { getProjectByIdSupabase, getRelatedProjectsSupabase } from '@/lib/projectsSupabase';
+import { getProjectById, getAllProjects } from '@/lib/projectsStatic';
+import type { Project } from '@/lib/projectsSupabase';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -27,40 +27,32 @@ const ProjectPage = () => {
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
-    
-    const loadProject = async () => {
-      if (!id) return;
-      
-      setLoading(true);
-      try {
-        const projectId = parseInt(id);
-        const foundProject = await getProjectByIdSupabase(projectId);
-        
-        if (foundProject) {
-          setProject(foundProject);
-          
-          // Set gallery images from project's galleryImages property or fall back to main image
-          if (foundProject.galleryImages && foundProject.galleryImages.length > 0) {
-            setGalleryImages([
-              foundProject.imageUrl, // Always include the main image first
-              ...foundProject.galleryImages
-            ]);
-          } else {
-            setGalleryImages([foundProject.imageUrl]);
-          }
-          
-          // Get related projects from Supabase
-          const related = await getRelatedProjectsSupabase(projectId, foundProject);
-          setRelatedProjects(related);
-        }
-      } catch (error) {
-        console.error('Error loading project:', error);
-      } finally {
-        setLoading(false);
+
+    if (!id) return;
+    setLoading(true);
+    const projectId = parseInt(id);
+    const foundProject = getProjectById(projectId);
+    if (foundProject) {
+      setProject(foundProject);
+      // Set gallery images from project's galleryImages property or fall back to main image
+      if (foundProject.galleryImages && foundProject.galleryImages.length > 0) {
+        setGalleryImages([
+          foundProject.imageUrl, // Always include the main image first
+          ...foundProject.galleryImages
+        ]);
+      } else {
+        setGalleryImages([foundProject.imageUrl]);
       }
-    };
-    
-    loadProject();
+      // Find related projects (e.g., same mainCategory, not archived, not self)
+      const allProjects = getAllProjects();
+      const related = allProjects.filter(p =>
+        p.id !== foundProject.id &&
+        p.mainCategory === foundProject.mainCategory &&
+        !p.archived
+      ).slice(0, 4);
+      setRelatedProjects(related);
+    }
+    setLoading(false);
   }, [id]);
 
   if (loading) {
