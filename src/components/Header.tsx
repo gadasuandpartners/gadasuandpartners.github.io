@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import Logo from './Logo';
+import { Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,6 +17,19 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
+    if (location.pathname === '/' && hash) {
+      e.preventDefault();
+      const element = document.getElementById(hash.replace('#', ''));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        // Update URL hash without reload
+        window.history.pushState(null, '', `#/${hash}`);
+      }
+    }
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 lg:px-12",
@@ -24,10 +39,10 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <Logo variant="full" />
         </div>
-        
+
         {/* Mobile Menu Button */}
-        <button 
-          className="lg:hidden" 
+        <button
+          className="lg:hidden"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           <div className="w-6 flex flex-col gap-1.5">
@@ -49,30 +64,41 @@ const Header = () => {
         {/* Desktop Navigation */}
         <nav className="hidden lg:block">
           <ul className="flex space-x-10 font-inter text-sm">
-            <li><a href="#home" className="hover:text-black/70 transition-colors" onClick={e => {
-              if (window.location.pathname !== "/") {
-                e.preventDefault();
-                window.location.href = "/#home";
-              }
-            }}>HOME</a></li>
-            <li><a href="#projects" className="hover:text-black/70 transition-colors" onClick={e => {
-              if (window.location.pathname !== "/") {
-                e.preventDefault();
-                window.location.href = "/#projects";
-              }
-            }}>PROJECTS</a></li>
-            <li><a href="#about" className="hover:text-black/70 transition-colors" onClick={e => {
-              if (window.location.pathname !== "/") {
-                e.preventDefault();
-                window.location.href = "/#about";
-              }
-            }}>ABOUT</a></li>
-            <li><a href="#contact" className="hover:text-black/70 transition-colors" onClick={e => {
-              if (window.location.pathname !== "/") {
-                e.preventDefault();
-                window.location.href = "/#contact";
-              }
-            }}>CONTACT</a></li>
+            <li>
+              <Link
+                to="/"
+                className="hover:text-black/70 transition-colors"
+                onClick={(e) => scrollToSection(e, '#home')}
+              >
+                HOME
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/projects"
+                className="hover:text-black/70 transition-colors"
+              >
+                PROJECTS
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={{ pathname: "/", hash: "#about" }}
+                className="hover:text-black/70 transition-colors"
+                onClick={(e) => scrollToSection(e, '#about')}
+              >
+                ABOUT
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={{ pathname: "/", hash: "#contact" }}
+                className="hover:text-black/70 transition-colors"
+                onClick={(e) => scrollToSection(e, '#contact')}
+              >
+                CONTACT
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>
@@ -85,40 +111,40 @@ const Header = () => {
         <nav className="px-6 py-8">
           <ul className="space-y-6 font-inter text-lg">
             <li>
-              <a 
-                href="#home"
+              <Link
+                to="/"
                 className="block py-2 hover:text-black/70 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => scrollToSection(e, '#home')}
               >
                 HOME
-              </a>
+              </Link>
             </li>
             <li>
-              <a 
-                href="#projects"
+              <Link
+                to="/projects"
                 className="block py-2 hover:text-black/70 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 PROJECTS
-              </a>
+              </Link>
             </li>
             <li>
-              <a 
-                href="#about"
+              <Link
+                to={{ pathname: "/", hash: "#about" }}
                 className="block py-2 hover:text-black/70 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => scrollToSection(e, '#about')}
               >
                 ABOUT
-              </a>
+              </Link>
             </li>
             <li>
-              <a 
-                href="#contact"
+              <Link
+                to={{ pathname: "/", hash: "#contact" }}
                 className="block py-2 hover:text-black/70 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => scrollToSection(e, '#contact')}
               >
                 CONTACT
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>

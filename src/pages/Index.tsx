@@ -7,22 +7,25 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const Index = () => {
+  const { hash } = useLocation();
+
   useEffect(() => {
-    const scrollToHash = () => {
-      if (window.location.hash) {
-        const id = window.location.hash.replace("#", "");
+    // Small timeout to ensure DOM is ready and layout is stable
+    const timer = setTimeout(() => {
+      if (hash) {
+        const id = hash.replace("#", "");
         const el = document.getElementById(id);
         if (el) {
           el.scrollIntoView({ behavior: "smooth" });
         }
       }
-    };
-    scrollToHash();
-    window.addEventListener("hashchange", scrollToHash);
-    return () => window.removeEventListener("hashchange", scrollToHash);
-  }, []);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [hash]);
 
   return (
     <div className="min-h-screen bg-white">

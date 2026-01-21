@@ -91,7 +91,9 @@ export const projects: Project[] = [
     "client": "Government of Arunachal Pradesh",
     "featured": "false",
     "archived": "false",
-    "galleryImages": []
+    "galleryImages": [
+      "/images/projects/project-7-gallery-1.png"
+    ]
   },
   {
     "id": "8",
