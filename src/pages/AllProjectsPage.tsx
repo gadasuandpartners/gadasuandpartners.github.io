@@ -27,13 +27,19 @@ const AllProjectsPage = () => {
   const filteredProjects = allProjects.filter(project => {
     const mainCatMatch = selectedMainCategory ? project.mainCategory === selectedMainCategory : true;
     const subCatMatch = selectedSubCategories.length > 0
-      ? selectedSubCategories.some(sub => (project.subCategory || '').split(',').map(s => s.trim()).includes(sub))
+      ? selectedSubCategories.some(sub => {
+        if (Array.isArray(project.subCategory)) {
+          return project.subCategory.includes(sub);
+        }
+        return (project.subCategory || '').split(',').map(s => s.trim()).includes(sub);
+      })
       : true;
-    return mainCatMatch && subCatMatch && !project.archived;
+    const isArchived = String(project.archived) === 'true';
+    return mainCatMatch && subCatMatch && !isArchived;
   });
   console.log("Filtered projects:", filteredProjects);
   const totalCount = allProjects.length;
-  const projects = allProjects;
+  const projects = filteredProjects;
   console.log('First project object:', allProjects[0]);
 
   return (
@@ -82,7 +88,7 @@ const AllProjectsPage = () => {
                 </Button>
               </div>
             )}
-            
+
           </div>
         </div>
       </section>

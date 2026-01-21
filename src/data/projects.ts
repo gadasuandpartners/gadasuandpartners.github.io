@@ -394,5 +394,22 @@ export const projects: Project[] = [
       "/images/projects/project-24-gallery-0.png",
       "/images/projects/project-24-gallery-1.png"
     ]
+  },
+  {
+    "id": "25",
+    "title": "Samas Residences",
+    "mainCategory": "Architectural Design",
+    "subCategory": "Residential Architecture - Multi Unit",
+    "year": "2026",
+    "imageUrl": "/images/projects/project-25-main.jpeg",
+    "description": "Samas Residences is a visionary ultra-luxury residential enclave that reimagines living through intricate lattice facades, serene reflective water channels, and geometric sculptural accents. Nestled along a palm-lined boulevard, the development offers exclusive residences with panoramic views, seamless indoor-outdoor flow, and a harmonious fusion of cultural heritage and futuristic elegance.",
+    "location": "Kissimmee, FL",
+    "architect": "Gadasu + Partners",
+    "area": "15 acres",
+    "status": "Conceptual / Planned",
+    "client": "Private Residences",
+    "featured": "false",
+    "archived": "false",
+    "galleryImages": []
   }
 ] as Project[];

@@ -73,7 +73,7 @@ const ProjectPage = () => {
         <div className="flex items-center justify-center pt-32">
           <div className="text-center">
             <h1 className="text-2xl font-light mb-4">Project not found</h1>
-            <Link to="/#projects" className="text-primary hover:underline">
+            <Link to="/projects" className="text-primary hover:underline">
               Back to projects
             </Link>
           </div>
@@ -85,20 +85,20 @@ const ProjectPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      
+
       <main className="pt-24">
         {/* Hero Section */}
         <section className="relative h-[70vh] overflow-hidden">
           <div className="absolute inset-0">
-            <img 
-              src={project.imageUrl} 
+            <img
+              src={project.imageUrl}
               alt={project.title}
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black/40"></div>
           </div>
           <div className="container relative h-full flex flex-col justify-end pb-16 text-white">
-            <Link to="/#projects" className="flex items-center text-white/80 hover:text-white transition-colors mb-8">
+            <Link to="/projects" className="flex items-center text-white/80 hover:text-white transition-colors mb-8">
               <ArrowLeft className="mr-2 h-4 w-4" />
               <span>Back to projects</span>
             </Link>
@@ -107,10 +107,10 @@ const ProjectPage = () => {
               <div className="flex flex-wrap gap-2">
                 {Array.isArray(project.subCategory)
                   ? project.subCategory.map((sub, i) => (
-                      <span key={i} className="bg-white/20 text-white/90 px-2 py-1 rounded text-xs">
-                        {sub}
-                      </span>
-                    ))
+                    <span key={i} className="bg-white/20 text-white/90 px-2 py-1 rounded text-xs">
+                      {sub}
+                    </span>
+                  ))
                   : <span className="bg-white/20 text-white/90 px-2 py-1 rounded text-xs">{project.subCategory}</span>
                 }
               </div>
@@ -128,13 +128,13 @@ const ProjectPage = () => {
               <div className="md:col-span-1">
                 <div className="sticky top-24">
                   <h2 className="text-2xl font-light mb-8">Project Information</h2>
-                  
+
                   <div className="space-y-6">
                     <div>
                       <h3 className="text-sm text-gray-500 mb-1">ARCHITECT</h3>
                       <p>Gadasu+Partners</p>
                     </div>
-                    
+
                     <div>
                       <h3 className="text-sm text-gray-500 mb-1">CLIENT</h3>
                       <p>{project.client}</p>
@@ -168,7 +168,7 @@ const ProjectPage = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Right Column - Project Description and Gallery */}
               <div className="md:col-span-2">
                 <div className="prose prose-lg max-w-none mb-12">
@@ -177,18 +177,18 @@ const ProjectPage = () => {
                 </div>
 
                 <Separator className="my-12" />
-                
+
                 {/* Gallery Section */}
                 <h2 className="text-3xl font-light mb-8">Project Gallery</h2>
-                
+
                 <div className="space-y-12">
                   <Carousel className="w-full">
                     <CarouselContent>
                       {galleryImages.map((img, index) => (
                         <CarouselItem key={index}>
-                          <AspectRatio ratio={16/9}>
-                            <img 
-                              src={img} 
+                          <AspectRatio ratio={16 / 9}>
+                            <img
+                              src={img}
                               alt={`Project image ${index + 1}`}
                               className="w-full h-full object-cover rounded-md"
                             />
@@ -199,13 +199,13 @@ const ProjectPage = () => {
                     <CarouselPrevious className="left-2" />
                     <CarouselNext className="right-2" />
                   </Carousel>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {galleryImages.slice(0, 4).map((img, index) => (
                       <div key={`grid-${index}`}>
-                        <AspectRatio ratio={4/3}>
-                          <img 
-                            src={img} 
+                        <AspectRatio ratio={4 / 3}>
+                          <img
+                            src={img}
                             alt={`Project detail ${index + 1}`}
                             className="w-full h-full object-cover rounded-md"
                           />
@@ -223,17 +223,17 @@ const ProjectPage = () => {
         <section className="py-16 bg-secondary">
           <div className="container">
             <h2 className="text-3xl font-light mb-8">Related Projects</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {relatedProjects.map((relatedProject) => (
-                <Link 
-                  key={relatedProject.id} 
+                <Link
+                  key={relatedProject.id}
                   to={`/project/${relatedProject.id}`}
                   className="group block"
                 >
-                  <AspectRatio ratio={4/3}>
-                    <img 
-                      src={relatedProject.imageUrl} 
+                  <AspectRatio ratio={4 / 3}>
+                    <img
+                      src={relatedProject.imageUrl}
                       alt={relatedProject.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
@@ -252,7 +252,7 @@ const ProjectPage = () => {
           </div>
         </section>
       </main>
-      
+
       <Footer />
     </div>
   );

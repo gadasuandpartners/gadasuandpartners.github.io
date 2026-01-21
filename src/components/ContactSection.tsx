@@ -22,18 +22,18 @@ const ContactSection = () => {
       form,
       'fHGi-baheSkdM0wdv' // Your EmailJS public key
     )
-    .then(() => {
-      toast({
-        title: "Message sent!",
-        description: "Thank you for your message. We'll get back to you soon.",
+      .then(() => {
+        toast({
+          title: "Message sent!",
+          description: "Thank you for your message. We'll get back to you soon.",
+        });
+      })
+      .catch(() => {
+        toast({
+          title: "Error",
+          description: "Failed to send the message. Please try again later.",
+        });
       });
-    })
-    .catch(() => {
-      toast({
-        title: "Error",
-        description: "Failed to send the message. Please try again later.",
-      });
-    });
   };
 
   return (
@@ -43,11 +43,11 @@ const ContactSection = () => {
           <h2 className="text-3xl md:text-4xl font-light mb-4">GET IN TOUCH</h2>
           <div className="w-20 h-0.5 bg-gray-900 mx-auto mb-6"></div>
           <p className="max-w-2xl mx-auto text-gray-600">
-            Interested in discussing a project or learning more about our services? 
+            Interested in discussing a project or learning more about our services?
             Reach out through the form below or via direct contact methods.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="animate-fade">
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -64,7 +64,7 @@ const ContactSection = () => {
                     className="w-full border-gray-300 focus:ring-black focus:border-black"
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                     Email
@@ -78,7 +78,7 @@ const ContactSection = () => {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
                   Subject
@@ -91,7 +91,7 @@ const ContactSection = () => {
                   className="w-full border-gray-300 focus:ring-black focus:border-black"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
                   Message
@@ -104,8 +104,8 @@ const ContactSection = () => {
                   className="w-full border-gray-300 focus:ring-black focus:border-black"
                 />
               </div>
-              
-              <Button 
+
+              <Button
                 type="submit"
                 className="bg-black hover:bg-black/80 text-white w-full py-6"
               >
@@ -113,12 +113,12 @@ const ContactSection = () => {
               </Button>
             </form>
           </div>
-          
+
           <div className="animate-fade">
             <div className="h-full flex flex-col">
               <div className="bg-secondary p-8 mb-6 flex-grow">
                 <h3 className="text-2xl font-light mb-6">Contact Information</h3>
-                
+
                 <div className="space-y-6">
                   <div className="flex items-start">
                     <MapPin className="w-5 h-5 mr-4 mt-1" />
@@ -130,7 +130,7 @@ const ContactSection = () => {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <Mail className="w-5 h-5 mr-4 mt-1" />
                     <div>
@@ -140,19 +140,11 @@ const ContactSection = () => {
                       </p>
                     </div>
                   </div>
-                  
-                  <div className="flex items-start">
-                    <Phone className="w-5 h-5 mr-4 mt-1" />
-                    <div>
-                      <h4 className="font-medium mb-1">Call Us</h4>
-                      <p className="text-gray-600">
-                        +1 (617) 549-4269
-                      </p>
-                    </div>
-                  </div>
+
+                  {/* Phone section removed */}
                 </div>
               </div>
-              
+
               <div className="bg-black text-white p-8">
                 <h3 className="text-xl font-light mb-4">Working Hours</h3>
                 <div className="space-y-2">
