@@ -12,8 +12,7 @@ import ProjectPage from "./pages/ProjectPage";
 import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
 import AllProjectsPage from "./pages/AllProjectsPage";
-import NotFound from "./pages/NotFound";
-
+import ScrollToTop from "./components/ScrollToTop";
 
 const AuthHandler = () => {
   const navigate = useNavigate();
@@ -44,6 +43,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <HashRouter>
+          <ScrollToTop />
           <AuthHandler />
           <Routes>
             <Route path="/" element={<Index />} />
