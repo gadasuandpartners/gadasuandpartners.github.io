@@ -12,7 +12,7 @@ const ProjectsGallery = () => {
   const allProjects = getAllProjects();
 
   // Specific order requested: Green House, Villa Néon, Samas, Azure Mosque, Kɔkɔɔ Pɔn, The Miraj
-  const selectedIds = ["16", "2", "25", "4", "15", "17"];
+  const selectedIds = ["16", "2", "3", "4", "15", "17"];
 
   const featuredProjects = selectedIds
     .map(id => allProjects.find(p => String(p.id) === id))
