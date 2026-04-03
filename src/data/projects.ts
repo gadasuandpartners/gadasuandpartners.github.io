@@ -40,7 +40,12 @@ export const projects: Project[] = [
     "client": "Private Residences",
     "featured": "false",
     "archived": "false",
-    "galleryImages": []
+    "galleryImages": [
+      "/images/projects/project-3-gallery-0.png",
+      "/images/projects/project-3-gallery-1.png",
+      "/images/projects/project-3-gallery-2.png",
+      "/images/projects/project-3-gallery-3.png"
+    ]
   },
   {
     "id": "4",
@@ -48,7 +53,7 @@ export const projects: Project[] = [
     "mainCategory": "Architectural Design",
     "subCategory": "Cultural Architecture",
     "year": "2023",
-    "imageUrl": "/images/projects/project-azure-mosque-main.png",
+    "imageUrl": "/images/projects/project-4-main.png",
     "description": "A contemporary mosque featuring blue glass elements that create stunning light patterns throughout the day. The design merges traditional Islamic architectural elements with modern construction techniques and materials.",
     "location": "Dubai, UAE",
     "architect": "Gadasu & Partners",
@@ -57,21 +62,24 @@ export const projects: Project[] = [
     "client": "Islamic Heritage Foundation",
     "featured": "false",
     "archived": "false",
-    "galleryImages": []
+    "galleryImages": [
+      "/images/projects/project-4-gallery-0.png",
+      "/images/projects/project-4-gallery-1.png",
+      "/images/projects/project-4-gallery-2.png"]
   },
   {
     "id": "5",
-    "title": "Harmony Heights",
+    "title": "TILT NYC",
     "mainCategory": "Architectural Design",
-    "subCategory": "Residential Architecture - Multi Unit",
+    "subCategory": "High Rise Buildings",
     "year": "2022",
-    "imageUrl": "/images/projects/project-harmony-heights-main.png",
-    "description": "A terraced residential development that steps down a hillside, offering panoramic views while maintaining privacy for residents. The layered architecture creates multiple communal gardens and outdoor spaces.",
-    "location": "Los Angeles, USA",
+    "imageUrl": "/images/projects/project-5-main.png",
+    "description": "TILT NYC is a mixed-use high-rise defined by a deliberate architectural tilt, integrating office, residential, and retail programs into a vertical urban neighborhood while enhancing New York’s skyline through a distinct and recognizable silhouette. The inclined form improves access to natural daylight and creates dynamic, oblique views across the city, while an open public podium at street level introduces pedestrian connections, reflective water features for microclimate cooling, and landscaped communal spaces that support wellness, social interaction, and civic life within the city’s dense urban fabric.",
+    "location": "Hudson Yards, NY",
     "architect": "Gadasu & Partners",
     "area": "15,300 sq.m",
-    "status": "Completed",
-    "client": "Pacific Homes",
+    "status": "Planned",
+    "client": "City of New York",
     "featured": "false",
     "archived": "false",
     "galleryImages": []
@@ -159,8 +167,7 @@ export const projects: Project[] = [
     "subCategory": "Large Scale Landscape Projects",
     "year": "2025",
     "imageUrl": "/images/projects/project-11-main.jpeg",
-    "description": "A serene architectural masterpiece inspired by the lush landscapes of Bali, featuring organic forms that blend seamlessly with the natural surroundings. The structure consists of multiple interconnected pods with green roofs and walls, creating a living, breathing building. Surrounded by tranquil water features and native flora, it serves as a sustainable retreat for eco-tourism, offering a unique blend of luxury and environmental consciousness",
-    "location": "Ubud, Bali, Indonesia",
+    "description": "Neo-Eden is a climate-responsive landscape architecture project in Bali conceived as a multifunctional public framework for gathering, movement, and environmental moderation. The project is organized around a series of monumental, tree-like structural columns that expand into elevated lattice canopies, providing continuous shade, rain protection, and passive cooling while remaining open to air and light. A network of bridges, platforms, and shaded walkways weaves through water gardens that support stormwater management and microclimate regulation, creating comfortable outdoor spaces throughout the day. Architecturally, Neo-Eden reads as an artificial forest—where structure, landscape, and infrastructure are integrated into a single system—designed to host cultural events, wellness activities, informal rest, and everyday public use within Bali’s tropical context.",
     "architect": "Gadasu & Partners",
     "area": "5000",
     "status": "Planned",
@@ -168,7 +175,9 @@ export const projects: Project[] = [
     "featured": "true",
     "archived": "false",
     "galleryImages": [
-      "/images/projects/project-11-gallery-0.jpeg"
+      "/images/projects/project-11-gallery-0.png",
+      "/images/projects/project-11-gallery-1.png",
+      "/images/projects/project-11-gallery-2.png"
     ]
   },
   {
@@ -244,7 +253,8 @@ export const projects: Project[] = [
     "featured": "false",
     "archived": "false",
     "galleryImages": [
-      "/images/projects/project-15-gallery-0.jpeg"
+      "/images/projects/project-15-gallery-0.jpeg",
+      "/images/projects/project-15-gallery-1.jpeg"
     ]
   },
   {
@@ -447,5 +457,26 @@ export const projects: Project[] = [
     "featured": "false",
     "archived": "false",
     "galleryImages": []
+  },
+  {
+    "id": "28",
+    "title": "Ohrid Topia Gardens",
+    "mainCategory": "Landscape Architecture",
+    "subCategory": "Gardens",
+    "year": "2026",
+    "imageUrl": "/images/projects/project-28-main.png",
+    "description": "Ohrid Topia Gardens is a monumental landscape intervention in Macedonia that reimagines the lakeside plateau as a living, sculptural environment. The project’s name, Topia, is a direct tribute to its extensive use of topiary, where every element, from towering braided arches to rolling mounds and patterned shrubbery, is meticulously sculpted into fluid, green geometry.\n\nThese botanical forms mimic the rhythmic waves of Lake Ohrid, creating a porous, cathedral-like canopy that transitions into intricate, terraced earthworks. Meandering water channels weave through the site, reflecting the sky and amplifying the sense of motion embedded in the terrain. By fusing ancient ecological richness with contemporary biophilic design, the gardens dissolve the boundary between architecture and nature into a single, evolving living system.",
+    "location": "Ohrid, Macedonia",
+    "architect": "Gadasu + Partners",
+    "area": "120000",
+    "status": "Concept",
+    "client": "Ohrid Municipality & Cultural Landscapes Initiative",
+    "featured": "false",
+    "archived": "false",
+    "galleryImages": [
+      "/images/projects/project-28-gallery-0.jpeg",
+      "/images/projects/project-28-gallery-1.jpeg",
+      "/images/projects/project-28-gallery-2.jpeg"
+    ]
   }
 ] as Project[];
