@@ -478,5 +478,47 @@ export const projects: Project[] = [
       "/images/projects/project-28-gallery-1.jpeg",
       "/images/projects/project-28-gallery-2.jpeg"
     ]
+  },
+  {
+    "id": "29",
+    "title": "Krakkers",
+    "mainCategory": "Landscape Architecture",
+    "subCategory": "Public Landscape",
+    "year": "2026",
+    "imageUrl": "/images/projects/project-29-main.png",
+    "description": "Krakkers is a monumental stone structure that rises dramatically from a rugged Irish hillside, echoing the ancient presence of Stonehenge through bold contemporary form. Crafted from weathered dark stone and stacked basalt-like pillars, Krakkers blends raw geological power with precise architectural geometry. A dense cluster of towering vertical spires emerges from a solid, layered circular base, creating a striking silhouette against the moody Irish sky. Its textured surfaces and eroded edges evoke timeless endurance amid the wild landscape. Standing alone on the exposed plateau, Krakkers commands the horizon with solemn presence and quiet mystery.",
+    "location": "Coastal Highlands, Ireland",
+    "architect": "Gadasu+Partners",
+    "area": "120000",
+    "status": "Concept",
+    "client": "Irish Landscape Initiative & Regional Development Authority",
+    "featured": "false",
+    "archived": "false",
+    "galleryImages": [
+      "/images/projects/project-29-gallery-0.png",
+      "/images/projects/project-29-gallery-1.png",
+      "/images/projects/project-29-gallery-2.png"
+    ]
+  },
+  {
+    "id": "30",
+    "title": "Palacio Gadasu",
+    "mainCategory": "Architectural Design",
+    "subCategory": "Residential Architecture - Single Family",
+    "year": "2026",
+    "imageUrl": "/images/projects/project-30-main.png",
+    "description": "This breathtaking cliffside estate in Big Sur, known as Palacio Gadasu, is a luxurious private house designed as a dream home for its architect owner. With flowing curves, intricate mosaic details, and whimsical structural forms that seem to grow naturally from the rugged California coastline, the house blends artistic vision with comfortable living. Cascading turquoise fountains and illuminated water features create a serene yet dramatic centerpiece in the front gardens, inviting relaxation and wonder. The warm beige façade, draped in vibrant magenta bougainvillea, features elegant arched windows and ornate balconies perfect for morning coffee while enjoying ocean breezes and swaying palm trees. Towering yet graceful, the multi-level house offers grand terraces overlooking the Pacific Ocean, where soft evening lights glow warmly from every window, illuminating the lush landscaped grounds and reflective pools below. Inside, Palacio Gadasu feels like a welcoming family home with sinuous lines, colorful ceramic tiles, skeletal ironwork, and organic shapes throughout, turning living spaces, bedrooms, and gathering areas into light-filled, sculptural sanctuaries. Perched dramatically on a Big Sur cliff with sweeping panoramic views of crashing waves and the rugged coastline, this house provides the ultimate blend of opulent luxury, artistic innovation, and timeless elegance in one of California’s most iconic settings.",
+    "location": "Big Sur, California, USA",
+    "architect": "Gadasu+Partners",
+    "area": "18000",
+    "status": "Concept",
+    "client": "Private Owner",
+    "featured": "false",
+    "archived": "false",
+    "galleryImages": [
+      "/images/projects/project-30-gallery-0.png",
+      "/images/projects/project-30-gallery-1.png",
+      "/images/projects/project-30-gallery-2.png"
+    ]
   }
 ] as Project[];
